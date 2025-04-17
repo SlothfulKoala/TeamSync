@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamSync - Home / Dashboard</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #d4e5f0, #f6d8e5); /* Soft pastel gradient */
+            background-size: 400% 400%;
+            animation: gradientBackground 15s ease infinite;
+            color: #333;
+            display: flex;
+            overflow-x: hidden;
+            transition: background 1s ease-in-out;
+        }
+
+        @keyframes gradientBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 50px;
+            box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+            z-index: 10;
+        }
+
+        .sidebar:hover {
+            width: 300px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #621f9a;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #34495e;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            color: #ffcc00;
+        }
+
+        .sidebar .material-icons {
+            font-size: 24px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            width: 100%;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar:hover + .main-content {
+            margin-left: 300px;
+        }
+
+        h1, h2 {
+            position: relative;
+            font-size: 3em;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 20px;
+            animation: slideInFromLeft 1.5s ease-out forwards;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #15176a; /* Soft yellow */
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #7a1d59; /* Soft pink */
+        }
+
+        /* New Soft color for the paragraph */
+        p {
+            font-size: 1.5em;
+            color: #163233; /* Light teal color */
+            text-align: center; /* Centered the text */
+            margin-top: 20px;
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .dashboard-overview {
+            margin-top: 120px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, color 0.3s;
+            margin-bottom: 30px;
+        }
+
+        .quick-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #771a39, #4089ff);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-value {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 1.5em;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #777;
+            font-size: 1em;
+            opacity: 0;
+            animation: fadeInFooter 1.5s ease-out forwards;
+        }
+
+        @keyframes fadeInFooter {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .sidebar:hover {
+                width: 250px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .sidebar:hover + .main-content {
+                margin-left: 250px;
+            }
+
+            .quick-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-card {
+                margin-bottom: 20px;
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .quick-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-card {
+                margin-bottom: 20px;
+                width: 90%;
+            }
+
+            h1, h2 {
+                font-size: 1.8em;
+            }
+
+            footer {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><span class="material-icons">home</span><a href="index.html">Home</a></li>
+            <li><span class="material-icons">check_circle</span><a href="tasks.html">Tasks</a></li>
+            <li><span class="material-icons">error</span><a href="issues.html">Issues</a></li>
+            <li><span class="material-icons">forum</span><a href="discussions.html">Discussions</a></li>
+            <li><span class="material-icons">description</span><a href="forms.html">Forms</a></li>
+            <li><span class="material-icons">done_all</span><a href="responses.html">Responses</a></li>
+            <li><span class="material-icons">account_circle</span><a href="profile.html">Profile</a></li>
+            <li><span class="material-icons">settings</span><a href="settings.html">Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Welcome to TeamSync</h1>
+            <p>Your hub for seamless team collaboration.</p>
+        </header>
+
+        <section class="dashboard-overview">
+            <h2>Overview</h2>
+            <p>TeamSync brings together essential tools to help your team stay organized and productive. Navigate through the modules above to manage tasks, track issues, engage in discussions, and build custom forms.</p>
+        </section>
+
+        <section class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value">15</div>
+                <div class="stat-label">Open Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Unresolved Issues</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2</div>
+                <div class="stat-label">New Discussions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Active Forms</div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 TeamSync. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamSync - Issues</title>
+    <link rel="stylesheet" href="issues.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #0056b3;
+        }
+        .issue-form {
+            margin-bottom: 30px;
+        }
+        .issue-form input, .issue-form select, .issue-form textarea, .issue-form button {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .issue-form button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .issue-form button:hover {
+            background-color: #218838;
+        }
+        .issue-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .issue-table th, .issue-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .issue-table th {
+            background-color: #f8f9fa;
+        }
+        .priority-high {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .priority-medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .priority-low {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Issue Tracker</h1>
+            <p>Log and manage issues effectively.</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tasks.html">Tasks</a></li>
+                <li><a href="discussions.html">Discussions</a></li>
+                <li><a href="forms.html">Forms</a></li>
+            </ul>
+        </nav>
+
+        <section class="issue-form">
+            <h2>Log a New Issue</h2>
+            <form>
+                <input type="text" placeholder="Issue Title" required>
+                <textarea placeholder="Issue Description" rows="4" required></textarea>
+                <select required>
+                    <option value="" disabled selected>Priority</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <select required>
+                    <option value="" disabled selected>Status</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+                <button type="submit">Log Issue</button>
+            </form>
+        </section>
+
+        <section class="issue-list">
+            <h2>Existing Issues</h2>
+            <table class="issue-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Bug in Login</td>
+                        <td>Users are unable to log in with valid credentials.</td>
+                        <td class="priority-high">High</td>
+                        <td>Open</td>
+                    </tr>
+                    <tr>
+                        <td>UI Overlap</td>
+                        <td>Buttons overlap on smaller screens.</td>
+                        <td class="priority-medium">Medium</td>
+                        <td>In Progress</td>
+                    </tr>
+                    <tr>
+                        <td>Typo in Footer</td>
+                        <td>Footer text has a spelling mistake.</td>
+                        <td class="priority-low">Low</td>
+                        <td>Resolved</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
