@@ -1,308 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeamSync - Home / Dashboard</title>
-    <link rel="stylesheet" href="index.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(120deg, #d4e5f0, #f6d8e5); /* Soft pastel gradient */
-            background-size: 400% 400%;
-            animation: gradientBackground 15s ease infinite;
-            color: #333;
-            display: flex;
-            overflow-x: hidden;
-            transition: background 1s ease-in-out;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TeamSync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        @keyframes gradientBackground {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
+    html,
+    body {
+      height: 100%;
+      font-family: sans-serif;
+    }
 
-        /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 250px;
-            background-color: #2c3e50;
-            color: white;
-            padding-top: 50px;
-            box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
-            transition: width 0.3s ease;
-            z-index: 10;
-        }
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
 
-        .sidebar:hover {
-            width: 300px;
-        }
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background-color: #1f2937;
+      color: white;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .sidebar.collapsed {
+      width: 60px;
+    }
 
-        .sidebar ul li {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #621f9a;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .nav-links {
+      list-style: none;
+      padding: 0.25rem 0;
+    }
 
-        .sidebar ul li:hover {
-            background-color: #34495e;
-        }
+    .nav-links li {
+      margin: 0.25rem 0;
+    }
 
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            margin-left: 10px;
-            transition: color 0.3s ease;
-        }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      transition: background 0.2s;
+    }
 
-        .sidebar ul li a:hover {
-            color: #ffcc00;
-        }
+    .nav-links a:hover {
+      background-color: #374151;
+      border-radius: 8px;
+    }
 
-        .sidebar .material-icons {
-            font-size: 24px;
-        }
+    .icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
 
-        /* Main Content Styles */
-        .main-content {
-            margin-left: 250px;
-            padding: 30px;
-            width: 100%;
-            transition: margin-left 0.3s ease;
-        }
+    .text {
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
 
-        .sidebar:hover + .main-content {
-            margin-left: 300px;
-        }
+    .sidebar.collapsed .text {
+      display: none;
+    }
 
-        h1, h2 {
-            position: relative;
-            font-size: 3em;
-            text-align: center;
-            color: #fff;
-            margin-bottom: 20px;
-            animation: slideInFromLeft 1.5s ease-out forwards;
-            font-weight: 700;
-        }
+    .toggle-link {
+      cursor: pointer;
+    }
 
-        h1 {
-            font-size: 3.5em;
-            color: #15176a; /* Soft yellow */
-        }
+    .sidebar-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-        h2 {
-            font-size: 2.5em;
-            color: #7a1d59; /* Soft pink */
-        }
+    .nav-top {
+      margin-top: 0.5rem;
+    }
 
-        /* New Soft color for the paragraph */
-        p {
-            font-size: 1.5em;
-            color: #163233; /* Light teal color */
-            text-align: center; /* Centered the text */
-            margin-top: 20px;
-        }
+    .project-links {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #374151;
+      overflow-y: auto;
+      max-height: 100%;
+    }
 
-        @keyframes slideInFromLeft {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+    .settings-link {
+      margin-bottom: 1rem;
+    }
 
-        .dashboard-overview {
-            margin-top: 120px;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, color 0.3s;
-            margin-bottom: 30px;
-        }
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background-color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .quick-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            gap: 20px;
-        }
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-        .stat-card {
-            background: linear-gradient(145deg, #771a39, #4089ff);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            color: white;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+    .topbar .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
 
-        .stat-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
+    .topbar .right-icons span {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
 
-        .stat-value {
-            font-size: 3em;
-            font-weight: bold;
-        }
+    /* Content Area */
+    .content-area {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+      max-width: 1200px; /* Maximum width for large screens */
+  margin: 0 auto; /* Center the content */
+  padding: 20px;
+    }
 
-        .stat-label {
-            font-size: 1.5em;
-        }
+    .content-box {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
 
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            color: #777;
-            font-size: 1em;
-            opacity: 0;
-            animation: fadeInFooter 1.5s ease-out forwards;
-        }
+    .dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Add space between the cards */
+}
 
-        @keyframes fadeInFooter {
-            to {
-                opacity: 1;
-            }
-        }
+.dashboard-card {
+  flex: 1 1 calc(25% - 20px); /* Adjust size to fit within the container */
+  min-width: 250px; /* Minimum width for responsiveness */
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s;
+}
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+    }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
+    .dashboard-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
 
-            .sidebar:hover {
-                width: 250px;
-            }
+    .dashboard-card p {
+      font-size: 1rem;
+      color: #4b5563;
+    }
 
-            .main-content {
-                margin-left: 200px;
-            }
+    /* Hero Section */
+    .hero-section {
+      background: #f9fafb;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
 
-            .sidebar:hover + .main-content {
-                margin-left: 250px;
-            }
+    .hero-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
 
-            .quick-stats {
-                flex-direction: column;
-                align-items: center;
-            }
+    .hero-section p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
 
-            .stat-card {
-                margin-bottom: 20px;
-                width: 80%;
-            }
-        }
+    .cta-btn {
+      padding: 0.75rem 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-        @media (max-width: 480px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                box-shadow: none;
-            }
+    .cta-btn:hover {
+      background-color: #2563eb;
+    }
 
-            .main-content {
-                margin-left: 0;
-            }
+    /* Recent Activity Section */
+    .recent-activity {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-            .quick-stats {
-                flex-direction: column;
-                align-items: center;
-            }
+    .recent-activity ul {
+      list-style: none;
+    }
 
-            .stat-card {
-                margin-bottom: 20px;
-                width: 90%;
-            }
+    .recent-activity li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-            h1, h2 {
-                font-size: 1.8em;
-            }
+    /* Stats Section */
+    .stats-section {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-            footer {
-                font-size: 0.8em;
-            }
-        }
-    </style>
+    /* Team Members Section */
+    .team-section {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .team-members {
+      list-style: none;
+    }
+
+    .team-members li {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .team-members .avatar {
+      margin-right: 1rem;
+    }
+
+    /* Deadlines Section */
+    .deadlines-section {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+  </style>
 </head>
+
 <body>
-    <div class="sidebar">
-        <ul>
-            <li><span class="material-icons">home</span><a href="index.html">Home</a></li>
-            <li><span class="material-icons">check_circle</span><a href="tasks.html">Tasks</a></li>
-            <li><span class="material-icons">error</span><a href="issues.html">Issues</a></li>
-            <li><span class="material-icons">forum</span><a href="discussions.html">Discussions</a></li>
-            <li><span class="material-icons">description</span><a href="forms.html">Forms</a></li>
-            <li><span class="material-icons">done_all</span><a href="responses.html">Responses</a></li>
-            <li><span class="material-icons">account_circle</span><a href="profile.html">Profile</a></li>
-            <li><span class="material-icons">settings</span><a href="settings.html">Settings</a></li>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar collapsed" id="sidebar">
+      <!-- Scrollable top section -->
+      <div class="sidebar-content">
+        <!-- Static nav section -->
+        <ul class="nav-links nav-top">
+          <!-- Toggle Button -->
+          <li>
+            <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+              <span class="icon">☰</span>
+              <span class="text" id="logoText">TeamSync</span>
+            </a>
+          </li>
+
+          <!-- Profile -->
+          <li>
+            <a href="#">
+              <span class="icon">👤</span>
+              <span class="text">Your Profile</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <span class="icon">💬</span>
+              <span class="text">Chats</span>
+            </a>
+          </li>
+
+          <!-- Dashboard -->
+          <li><a href="#"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
         </ul>
-    </div>
 
-    <div class="main-content">
-        <header>
-            <h1>Welcome to TeamSync</h1>
-            <p>Your hub for seamless team collaboration.</p>
-        </header>
+        <!-- Project List Section -->
+        <ul class="nav-links project-links">
+          <li><a href="#"><span class="icon">📁</span><span class="text">Project A</span></a></li>
+          <li><a href="#"><span class="icon">📁</span><span class="text">Project B</span></a></li>
+          <!-- Future projects can be injected here -->
+        </ul>
+      </div>
 
-        <section class="dashboard-overview">
-            <h2>Overview</h2>
-            <p>TeamSync brings together essential tools to help your team stay organized and productive. Navigate through the modules above to manage tasks, track issues, engage in discussions, and build custom forms.</p>
-        </section>
+      <!-- Bottom Section -->
+      <ul class="nav-links">
+        <li class="settings-link">
+          <a href="#">
+            <span class="icon">⚙️</span>
+            <span class="text">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
 
-        <section class="quick-stats">
-            <div class="stat-card">
-                <div class="stat-value">15</div>
-                <div class="stat-label">Open Tasks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">3</div>
-                <div class="stat-label">Unresolved Issues</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">2</div>
-                <div class="stat-label">New Discussions</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">5</div>
-                <div class="stat-label">Active Forms</div>
-            </div>
-        </section>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="page-title">
+          <h2>TeamSync</h2>
+        </div>
+        <div class="right-icons">
+          <span title="Notifications">🔔</span>
+          <span title="Profile">👤</span>
+        </div>
+      </div>
 
-        <footer>
-            <p>&copy; 2025 TeamSync. All rights reserved.</p>
-        </footer>
-    </div>
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <h2>Welcome to TeamSync</h2>
+          <p>Your centralized platform to manage projects, tasks, and team communication.</p>
+          <button class="cta-btn">Start a New Project</button>
+        </div>
+
+        <!-- Dashboard Grid with additional sections -->
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3>📁 Projects</h3>
+            <p>2 Active Projects</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>📝 Tasks</h3>
+            <p>14 Tasks Pending</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>💬 Messages</h3>
+            <p>3 New Messages</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>🐞 Issues</h3>
+            <p>5 Open Issues</p>
+          </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="recent-activity">
+          <h3>Recent Activity</h3>
+          <ul>
+            <li>Task "Fix Bug" completed by Alice</li>
+            <li>New message from Bob: "Project A Discussion"</li>
+            <li>Project "B" status updated</li>
+          </ul>
+        </div>
+
+        <!-- Stats/Charts Section -->
+        <div class="stats-section">
+          <h3>Project Completion Stats</h3>
+          <div class="chart">
+            <!-- A placeholder for a chart or progress bars -->
+            <p>70% of Project A completed</p>
+          </div>
+        </div>
+
+        <!-- Team Section -->
+        <div class="team-section">
+          <h3>Team Members Online</h3>
+          <ul class="team-members">
+            <li><span class="avatar">👤</span> Alice</li>
+            <li><span class="avatar">👤</span> Bob</li>
+          </ul>
+        </div>
+
+        <!-- Upcoming Deadlines Section -->
+        <div class="deadlines-section">
+          <h3>Upcoming Deadlines</h3>
+          <ul>
+            <li>Project A deadline: April 25</li>
+            <li>Task "Bug Fix" due: April 22</li>
+          </ul>
+        </div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const logoText = document.getElementById("logoText");
+
+      sidebar.classList.toggle("collapsed");
+
+      if (sidebar.classList.contains("collapsed")) {
+        logoText.textContent = "";
+      } else {
+        logoText.textContent = "TeamSync";
+      }
+    }
+  </script>
 </body>
+
 </html>
