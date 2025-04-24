@@ -28,10 +28,13 @@
       width: 220px;
       background-color: #1f2937;
       color: white;
+      height: 100vh;
+      position: fixed;
       transition: width 0.3s ease;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      z-index: 10;
     }
 
     .sidebar.collapsed {
@@ -86,12 +89,37 @@
       flex-direction: column;
     }
 
+    .nav-top {
+      margin-top: 0.5rem;
+    }
+
+    .project-links {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #374151;
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    .settings-link {
+      margin-bottom: 1rem;
+    }
+
     /* Main Content */
     .main-content {
       flex: 1;
       background-color: #f3f4f6;
       display: flex;
       flex-direction: column;
+      margin-left: 220px;
+      /* Match the sidebar width */
+      transition: margin-left 0.3s ease;
+      /* Add transition for smooth collapsing */
+    }
+
+    .sidebar.collapsed+.main-content {
+      margin-left: 60px;
+      /* Match the collapsed sidebar width */
     }
 
     /* Topbar */
@@ -262,25 +290,59 @@
 
 <body>
   <div class="app-container">
-    <!-- Sidebar -->
-    <aside class="sidebar collapsed" id="sidebar">
-      <div class="sidebar-content">
-        <ul class="nav-links nav-top">
-          <li>
-            <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
-              <span class="icon">☰</span>
-              <span class="text" id="logoText">TeamSync</span>
-            </a>
-          </li>
-          <li><a href="index.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
-          <li><a href="#"><span class="icon">💬</span><span class="text">Chats</span></a></li>
-        </ul>
-      </div>
-    </aside>
+    <!-- Sidebar from index.html -->
+    <!-- Sidebar from index.html -->
+<aside class="sidebar collapsed" id="sidebar">
+  <!-- Scrollable top section -->
+  <div class="sidebar-content">
+    <!-- Static nav section -->
+    <ul class="nav-links nav-top">
+      <!-- Toggle Button -->
+      <li>
+        <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+          <span class="icon">☰</span>
+          <span class="text" id="logoText">TeamSync</span>
+        </a>
+      </li>
+
+      <!-- Profile -->
+      <li>
+        <a href="#">
+          <span class="icon">👤</span>
+          <span class="text">Your Profile</span>
+        </a>
+      </li>
+
+      <!-- Dashboard -->
+      <li><a href="index.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
+      
+      <!-- Projects (moved from project-links) -->
+      <li>
+        <a href="project.html">
+          <span class="icon">📁</span>
+          <span class="text">Projects</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Empty container to maintain structure -->
+    <div class="spacer"></div>
+  </div>
+
+  <!-- Bottom Section - Settings stays at the bottom -->
+  <ul class="nav-links">
+    <li class="settings-link">
+      <a href="#">
+        <span class="icon">⚙️</span>
+        <span class="text">Settings</span>
+      </a>
+    </li>
+  </ul>
+</aside>
 
     <!-- Main Content -->
-    <main class="main-content">
-      <!-- Topbar -->
+    <main class="main-content" id="mainContent">
+      <!-- Topbar from index.html -->
       <div class="topbar">
         <div class="page-title">
           <h2>Global Chat</h2>
@@ -296,22 +358,7 @@
         <!-- Chat Sidebar -->
         <div class="chat-sidebar">
           <div class="chat-sidebar-header">Chats</div>
-          <div class="chat-list">
-            <div class="chat-list-item">
-              <div class="avatar">A</div>
-              <div class="chat-info">
-                <div class="name">Alice</div>
-                <div class="last-message">Hey, how's it going?</div>
-              </div>
-            </div>
-            <div class="chat-list-item">
-              <div class="avatar">B</div>
-              <div class="chat-info">
-                <div class="name">Bob</div>
-                <div class="last-message">Let's discuss the project.</div>
-              </div>
-            </div>
-          </div>
+          <div class="chat-list" id="chatList"></div>
         </div>
 
         <!-- Chat Area -->
@@ -337,7 +384,7 @@
       apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
       authDomain: "teamsync-28a36.firebaseapp.com",
       projectId: "teamsync-28a36",
-      storageBucket: "teamsync-28a36.firebasestorage.app",
+      storageBucket: "teamsync-28a36.appspot.com",
       messagingSenderId: "518634293938",
       appId: "1:518634293938:web:2c94b73b69c20349ae57ab"
     };
@@ -346,85 +393,135 @@
     const db = getFirestore(app);
     let currentChatId = null;
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const sendButton = document.getElementById('sendButton');
-      sendButton.addEventListener('click', sendMessage);
-
-      // Example: Automatically join a default chat
-      createOrJoinChat("Global Chat");
+    document.addEventListener('DOMContentLoaded', async function () {
+      await createOrJoinChat("Global Chat", ["user_1"]);
+      await loadChatList();
     });
 
-    async function createOrJoinChat(chatName) {
+    async function loadChatList() {
+      const chatListDiv = document.getElementById("chatList");
+      chatListDiv.innerHTML = "";
+
+      const q = query(collection(db, "chats"), where("members", "array-contains", "user_1"));
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach(doc => {
+        const chat = doc.data();
+        const chatId = doc.id;
+
+        const chatItem = document.createElement("div");
+        chatItem.classList.add("chat-list-item");
+        chatItem.innerHTML = `
+          <div class="avatar">${chat.name.charAt(0).toUpperCase()}</div>
+          <div class="chat-info">
+            <div class="name">${chat.name}</div>
+            <div class="last-message">Click to open</div>
+          </div>
+        `;
+
+        chatItem.addEventListener("click", () => {
+          currentChatId = chatId;
+          document.getElementById("chatHeader").innerText = `Chat: ${chat.name}`;
+          listenToMessages();
+        });
+
+        chatListDiv.appendChild(chatItem);
+      });
+    }
+
+    async function createOrJoinChat(chatName, members) {
       const q = query(collection(db, "chats"), where("name", "==", chatName));
       const snapshot = await getDocs(q);
 
       if (!snapshot.empty) {
         currentChatId = snapshot.docs[0].id;
       } else {
-        const chatRef = await addDoc(collection(db, "chats"), {
-          name: chatName,
-          createdAt: serverTimestamp()
-        });
-        currentChatId = chatRef.id;
+        currentChatId = await createGroupChat(chatName, null, members);
       }
 
-      document.getElementById("chatHeader").innerText = `Chat: ${chatName}`;
       listenToMessages();
     }
 
+    async function createGroupChat(groupName, projectId, members) {
+      const groupRef = await addDoc(collection(db, "chats"), {
+        name: groupName,
+        type: "group",
+        members: members,
+        projectId: projectId || null,
+        createdAt: serverTimestamp(),
+      });
+
+      await addDoc(collection(db, "chats", groupRef.id, "messages"), {
+        text: `Welcome to ${groupName}!`,
+        senderName: "System",
+        senderId: "system",
+        timestamp: serverTimestamp(),
+      });
+
+      return groupRef.id;
+    }
+
     async function sendMessage() {
-      const msg = document.getElementById("messageInput").value;
-      if (msg.trim()) {
+      const msgInput = document.getElementById("messageInput");
+      const msg = msgInput.value.trim();
+      if (msg && currentChatId) {
         await addDoc(collection(db, "chats", currentChatId, "messages"), {
           text: msg,
-          sender: "Anonymous",
+          senderId: "user_1",
+          senderName: "You",
           timestamp: serverTimestamp()
         });
-        document.getElementById("messageInput").value = "";
+        msgInput.value = "";
       }
     }
 
     function listenToMessages() {
-  const messagesRef = collection(db, "chats", currentChatId, "messages");
-  const q = query(messagesRef, orderBy("timestamp"));
-  
-  onSnapshot(q, (snapshot) => {
-    const messagesDiv = document.getElementById("messages");
-    messagesDiv.innerHTML = "";
+      const messagesRef = collection(db, "chats", currentChatId, "messages");
+      const q = query(messagesRef, orderBy("timestamp"));
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+      onSnapshot(q, (snapshot) => {
+        const messagesDiv = document.getElementById("messages");
+        messagesDiv.innerHTML = "";
 
-      // Message wrapper
-      const msgDiv = document.createElement("div");
-      msgDiv.classList.add("message");
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const msgDiv = document.createElement("div");
+          msgDiv.classList.add("message");
+          if (data.senderId === "user_1") {
+            msgDiv.classList.add("sent");
+          }
 
-      // Add 'sent' class if it's from "Anonymous" (you can update this logic)
-      if (data.sender === "Anonymous") {
-        msgDiv.classList.add("sent");
-      }
+          const bubble = document.createElement("div");
+          bubble.classList.add("bubble");
+          bubble.textContent = `${data.senderName}: ${data.text}`;
+          msgDiv.appendChild(bubble);
+          messagesDiv.appendChild(msgDiv);
+        });
+      });
+    }
 
-      // Message bubble
-      const bubble = document.createElement("div");
-      bubble.classList.add("bubble");
-      bubble.textContent = data.text;
-
-      msgDiv.appendChild(bubble);
-      messagesDiv.appendChild(msgDiv);
-    });
-
-    scrollToBottom(); // auto scroll after rendering
-  });
-}
-
-
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
     document.getElementById("messageInput").addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         e.preventDefault();
         sendMessage();
       }
     });
+  </script>
 
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const logoText = document.getElementById("logoText");
+
+      sidebar.classList.toggle("collapsed");
+
+      if (sidebar.classList.contains("collapsed")) {
+        logoText.textContent = "";
+      } else {
+        logoText.textContent = "TeamSync";
+      }
+    }
   </script>
 </body>
 
