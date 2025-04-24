@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Global Chat - TeamSync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: sans-serif;
+    }
+
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background-color: #1f2937;
+      color: white;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.collapsed {
+      width: 60px;
+    }
+
+    .nav-links {
+      list-style: none;
+      padding: 0.25rem 0;
+    }
+
+    .nav-links li {
+      margin: 0.25rem 0;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      transition: background 0.2s;
+    }
+
+    .nav-links a:hover {
+      background-color: #374151;
+      border-radius: 8px;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .text {
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
+
+    .sidebar.collapsed .text {
+      display: none;
+    }
+
+    .toggle-link {
+      cursor: pointer;
+    }
+
+    .sidebar-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background-color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .topbar .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .topbar .right-icons span {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* Chat Layout */
+    .chat-container {
+      display: flex;
+      height: 100%;
+    }
+
+    /* Chat Sidebar */
+    .chat-sidebar {
+      width: 300px;
+      background-color: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-sidebar-header {
+      padding: 1rem;
+      background-color: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: bold;
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .chat-list-item {
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chat-list-item:hover {
+      background-color: #f3f4f6;
+    }
+
+    .chat-list-item .avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #e5e7eb;
+      border-radius: 50%;
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #4b5563;
+    }
+
+    .chat-list-item .chat-info {
+      flex: 1;
+    }
+
+    .chat-list-item .chat-info .name {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .chat-list-item .chat-info .last-message {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    /* Chat Area */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 1rem;
+      background-color: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .message {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .message.sent {
+      justify-content: flex-end;
+    }
+
+    .message .bubble {
+      max-width: 60%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .message.sent .bubble {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .chat-input {
+      padding: 1rem;
+      background-color: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+
+    .chat-input button {
+      padding: 0.75rem 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .chat-input button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar collapsed" id="sidebar">
+      <div class="sidebar-content">
+        <ul class="nav-links nav-top">
+          <li>
+            <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+              <span class="icon">☰</span>
+              <span class="text" id="logoText">TeamSync</span>
+            </a>
+          </li>
+          <li><a href="index.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
+          <li><a href="#"><span class="icon">💬</span><span class="text">Chats</span></a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="page-title">
+          <h2>Global Chat</h2>
+        </div>
+        <div class="right-icons">
+          <span title="Notifications">🔔</span>
+          <span title="Profile">👤</span>
+        </div>
+      </div>
+
+      <!-- Chat Layout -->
+      <div class="chat-container">
+        <!-- Chat Sidebar -->
+        <div class="chat-sidebar">
+          <div class="chat-sidebar-header">Chats</div>
+          <div class="chat-list">
+            <div class="chat-list-item">
+              <div class="avatar">A</div>
+              <div class="chat-info">
+                <div class="name">Alice</div>
+                <div class="last-message">Hey, how's it going?</div>
+              </div>
+            </div>
+            <div class="chat-list-item">
+              <div class="avatar">B</div>
+              <div class="chat-info">
+                <div class="name">Bob</div>
+                <div class="last-message">Let's discuss the project.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+          <div class="chat-header">
+            <div id="chatHeader">Chat with Alice</div>
+          </div>
+          <div id="messages" class="chat-messages"></div>
+          <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type a message..." />
+            <button id="sendButton">Send</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, where } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+      authDomain: "teamsync-28a36.firebaseapp.com",
+      projectId: "teamsync-28a36",
+      storageBucket: "teamsync-28a36.firebasestorage.app",
+      messagingSenderId: "518634293938",
+      appId: "1:518634293938:web:2c94b73b69c20349ae57ab"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let currentChatId = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const sendButton = document.getElementById('sendButton');
+      sendButton.addEventListener('click', sendMessage);
+
+      // Example: Automatically join a default chat
+      createOrJoinChat("Global Chat");
+    });
+
+    async function createOrJoinChat(chatName) {
+      const q = query(collection(db, "chats"), where("name", "==", chatName));
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        currentChatId = snapshot.docs[0].id;
+      } else {
+        const chatRef = await addDoc(collection(db, "chats"), {
+          name: chatName,
+          createdAt: serverTimestamp()
+        });
+        currentChatId = chatRef.id;
+      }
+
+      document.getElementById("chatHeader").innerText = `Chat: ${chatName}`;
+      listenToMessages();
+    }
+
+    async function sendMessage() {
+      const msg = document.getElementById("messageInput").value;
+      if (msg.trim()) {
+        await addDoc(collection(db, "chats", currentChatId, "messages"), {
+          text: msg,
+          sender: "Anonymous",
+          timestamp: serverTimestamp()
+        });
+        document.getElementById("messageInput").value = "";
+      }
+    }
+
+    function listenToMessages() {
+  const messagesRef = collection(db, "chats", currentChatId, "messages");
+  const q = query(messagesRef, orderBy("timestamp"));
+  
+  onSnapshot(q, (snapshot) => {
+    const messagesDiv = document.getElementById("messages");
+    messagesDiv.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      // Message wrapper
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("message");
+
+      // Add 'sent' class if it's from "Anonymous" (you can update this logic)
+      if (data.sender === "Anonymous") {
+        msgDiv.classList.add("sent");
+      }
+
+      // Message bubble
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      bubble.textContent = data.text;
+
+      msgDiv.appendChild(bubble);
+      messagesDiv.appendChild(msgDiv);
+    });
+
+    scrollToBottom(); // auto scroll after rendering
+  });
+}
+
+
+    document.getElementById("messageInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+  </script>
+</body>
+
+</html>
