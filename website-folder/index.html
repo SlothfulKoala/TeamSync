@@ -136,9 +136,11 @@
       padding: 1.25rem;
       overflow-y: auto;
       flex: 1;
-      max-width: 1200px; /* Maximum width for large screens */
-  margin: 0 auto; /* Center the content */
-  padding: 20px;
+      max-width: 1200px;
+      /* Maximum width for large screens */
+      margin: 0 auto;
+      /* Center the content */
+      padding: 20px;
     }
 
     .content-box {
@@ -149,22 +151,25 @@
     }
 
     .dashboard-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* Add space between the cards */
-}
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      /* Add space between the cards */
+    }
 
-.dashboard-card {
-  flex: 1 1 calc(25% - 20px); /* Adjust size to fit within the container */
-  min-width: 250px; /* Minimum width for responsiveness */
-  background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: transform 0.2s;
-}
-    
+    .dashboard-card {
+      flex: 1 1 calc(25% - 20px);
+      /* Adjust size to fit within the container */
+      min-width: 250px;
+      /* Minimum width for responsiveness */
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
     .dashboard-card:hover {
       transform: translateY(-5px);
     }
@@ -303,10 +308,10 @@
             </a>
           </li>
 
-          <!-- Dashboard -->
-          <li><a href="#"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
-
-          <li><a href="#"><span class="icon">📁</span><span class="text">Projects</span></a></li>
+          <li>
+            <a href="#"><span class="icon">📁</span>
+            <span class="text">Projects</span></a>
+          </li>
         </ul>
 
       </div>

@@ -364,7 +364,7 @@
         <!-- Chat Area -->
         <div class="chat-area">
           <div class="chat-header">
-            <div id="chatHeader">Chat with Alice</div>
+            <div id="chatHeader">Alice</div>
           </div>
           <div id="messages" class="chat-messages"></div>
           <div class="chat-input">
@@ -421,7 +421,7 @@
 
         chatItem.addEventListener("click", () => {
           currentChatId = chatId;
-          document.getElementById("chatHeader").innerText = `Chat: ${chat.name}`;
+          document.getElementById("chatHeader").innerText = `${chat.name}`;
           listenToMessages();
         });
 
