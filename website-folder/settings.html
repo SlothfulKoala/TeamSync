@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamSync - Settings</title>
+    <link rel="stylesheet" href="settings.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #e24b4b;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #0056b3;
+        }
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        .settings-section h2 {
+            margin-bottom: 15px;
+        }
+        .settings-section label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .settings-section input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .dark-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .save-settings {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .save-settings button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .save-settings button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Settings</h1>
+            <p>Customize your TeamSync experience.</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tasks.html">Tasks</a></li>
+                <li><a href="issues.html">Issues</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="discussions.html">Discussions</a></li>
+            </ul>
+        </nav>
+
+        <section class="settings-section">
+            <h2>Appearance</h2>
+            <div class="dark-mode-toggle">
+                <label for="dark-mode">Enable Dark Mode</label>
+                <input type="checkbox" id="dark-mode" onchange="toggleDarkMode()">
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <h2>Notifications</h2>
+            <label>
+                <input type="checkbox" id="email-notifications">
+                Enable Email Notifications
+            </label>
+            <label>
+                <input type="checkbox" id="push-notifications">
+                Enable Push Notifications
+            </label>
+        </section>
+
+        <div class="save-settings">
+            <button onclick="saveSettings()">Save Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const isDarkMode = document.getElementById('dark-mode').checked;
+            if (isDarkMode) {
+                document.body.style.backgroundColor = '#333';
+                document.body.style.color = '#fff';
+            } else {
+                document.body.style.backgroundColor = '#f4f4f4';
+                document.body.style.color = '#333';
+            }
+        }
+
+        // Save settings (for now, just an alert)
+        function saveSettings() {
+            const darkMode = document.getElementById('dark-mode').checked;
+            const emailNotifications = document.getElementById('email-notifications').checked;
+            const pushNotifications = document.getElementById('push-notifications').checked;
+
+            alert(`Settings saved:\nDark Mode: ${darkMode}\nEmail Notifications: ${emailNotifications}\nPush Notifications: ${pushNotifications}`);
+        }
+    </script>
+</body>
+</html>

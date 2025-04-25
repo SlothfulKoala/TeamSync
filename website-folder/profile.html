@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamSync - Profile</title>
+    <link rel="stylesheet" href="profile.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #0056b3;
+        }
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        .profile-section h2 {
+            margin-bottom: 15px;
+        }
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .profile-info img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid #007bff;
+        }
+        .profile-info div {
+            flex: 1;
+        }
+        .activity-log {
+            margin-top: 30px;
+        }
+        .activity-log table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .activity-log th, .activity-log td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .activity-log th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User Profile</h1>
+            <p>View and manage your profile and activity.</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tasks.html">Tasks</a></li>
+                <li><a href="issues.html">Issues</a></li>
+                <li><a href="forms.html">Forms</a></li>
+                <li><a href="discussions.html">Discussions</a></li>
+                <li><a href="settings.html">Settings</a></li>
+            </ul>
+        </nav>
+
+        <section class="profile-section">
+            <h2>Profile Information</h2>
+            <div class="profile-info">
+                <img src="profile-placeholder.png" alt="User Profile Picture">
+                <div>
+                    <p><strong>Name:</strong> John Doe</p>
+                    <p><strong>Email:</strong> john.doe@example.com</p>
+                    <p><strong>Role:</strong> Team Member</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="activity-log">
+            <h2>Recent Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Activity</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>April 15, 2025</td>
+                        <td>Created a Task</td>
+                        <td>Task: "Complete project documentation"</td>
+                    </tr>
+                    <tr>
+                        <td>April 14, 2025</td>
+                        <td>Posted in Discussion</td>
+                        <td>Thread: "How to improve team collaboration?"</td>
+                    </tr>
+                    <tr>
+                        <td>April 13, 2025</td>
+                        <td>Logged an Issue</td>
+                        <td>Issue: "Bug in login functionality"</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
