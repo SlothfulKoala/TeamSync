@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Firebase Issue Tracker</title>
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 20px;
+    }
+    h1, h2 {
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    button {
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    select {
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Firebase Issue Tracker</h1>
+
+  <!-- Form to Add a New Issue -->
+  <h2>Add New Issue</h2>
+  <form id="issue-form">
+    <input type="text" id="issue-title" placeholder="Issue Title" required />
+    <textarea id="issue-desc" placeholder="Issue Description" required></textarea>
+    <select id="issue-priority" required>
+      <option value="" disabled selected>Select Priority</option>
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+    <select id="issue-status" required>
+      <option value="" disabled selected>Select Status</option>
+      <option value="Open">Open</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Resolved">Resolved</option>
+    </select>
+    <button type="submit">Add Issue</button>
+  </form>
+
+  <!-- Table to Display Issues -->
+  <h2>Issue List</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Priority</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="issues-table-body"></tbody>
+  </table>
+
+  <!-- Firebase SDK and Application Code -->
+  <!-- Using ES Modules with Firebase v9 modular SDK -->
+  <script type="module">
+    // Import necessary Firebase modules from the CDN.
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      onSnapshot, 
+      doc, 
+      updateDoc 
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    // Your Firebase configuration – replace with your actual configuration details.
+    const firebaseConfig = {
+        apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+        authDomain: "teamsync-28a36.firebaseapp.com",
+        projectId: "teamsync-28a36",
+        storageBucket: "teamsync-28a36.firebasestorage.app",
+        messagingSenderId: "518634293938",
+        appId: "1:518634293938:web:2c94b73b69c20349ae57ab"
+    };
+
+    // Initialize Firebase and Firestore in your app.
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- Function to add a new issue ---
+    async function addIssue(event) {
+      event.preventDefault(); // Prevent form page reload.
+
+      // Collect values from the form inputs.
+      const title = document.getElementById("issue-title").value;
+      const description = document.getElementById("issue-desc").value;
+      const priority = document.getElementById("issue-priority").value;
+      const status = document.getElementById("issue-status").value;
+
+      try {
+        // addDoc creates a new document in "issues". Firestore automatically creates the collection if needed.
+        const docRef = await addDoc(collection(db, "issues"), {
+          title: title,
+          description: description,
+          priority: priority,
+          status: status,
+          createdAt: new Date()
+        });
+        console.log("Issue added with ID:", docRef.id);
+        event.target.reset(); // Clear form fields after submission.
+      } catch (error) {
+        console.error("Error adding issue:", error);
+      }
+    }
+
+    // --- Function to render the issues in the table ---
+    function renderIssues(snapshotDocs) {
+      const tableBody = document.getElementById("issues-table-body");
+      tableBody.innerHTML = ""; // Clear existing table rows.
+
+      snapshotDocs.forEach(issueDoc => {
+        const data = issueDoc.data();
+        const tr = document.createElement("tr");
+        tr.setAttribute("data-id", issueDoc.id);
+
+        // Title cell.
+        const tdTitle = document.createElement("td");
+        tdTitle.textContent = data.title;
+        tr.appendChild(tdTitle);
+
+        // Description cell.
+        const tdDesc = document.createElement("td");
+        tdDesc.textContent = data.description;
+        tr.appendChild(tdDesc);
+
+        // Priority cell.
+        const tdPriority = document.createElement("td");
+        tdPriority.textContent = data.priority;
+        tr.appendChild(tdPriority);
+
+        // Status cell with an updated dropdown.
+        const tdStatus = document.createElement("td");
+        const select = document.createElement("select");
+        // Use the same options as in the form.
+        const statuses = ["Open", "In Progress", "Resolved"];
+        statuses.forEach(stat => {
+          const option = document.createElement("option");
+          option.value = stat;
+          option.textContent = stat;
+          if (data.status === stat) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        });
+        // -- Status update event listener with confirmation --
+        select.addEventListener("change", async (ev) => {
+          const newStatus = ev.target.value;
+          const confirmUpdate = confirm(`Are you sure you want to update status to "${newStatus}"?`);
+          if (!confirmUpdate) {
+            // Revert to the previous status if the update is not confirmed.
+            ev.target.value = data.status;
+            return;
+          }
+          try {
+            // Update the document in Firestore.
+            await updateDoc(doc(db, "issues", issueDoc.id), { status: newStatus });
+            console.log("Status updated to:", newStatus);
+          } catch (error) {
+            console.error("Error updating status:", error);
+            // Revert back on error.
+            ev.target.value = data.status;
+          }
+        });
+        tdStatus.appendChild(select);
+        tr.appendChild(tdStatus);
+
+        // Append the row into the table body.
+        tableBody.appendChild(tr);
+      });
+    }
+
+    // --- Set up a real-time listener for the "issues" collection ---
+    // This ensures that any additions, modifications, or deletions in Firestore are reflected immediately.
+    onSnapshot(collection(db, "issues"), (snapshot) => {
+      renderIssues(snapshot.docs);
+    });
+
+    // Attach the form submit event listener.
+    document.getElementById("issue-form").addEventListener("submit", addIssue);
+  </script>
+</body>
+</html>
