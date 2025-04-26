@@ -320,134 +320,145 @@
       transform: translateY(0);
     }
 
-    /* Modal background */
-    /* Basic Modal Styles */
+    /* Modal Styles */
     .modal {
       display: none;
-      /* Hidden by default */
       position: fixed;
       z-index: 1000;
-      /* Sit on top */
-      left: 0;
-      top: 0;
+      inset: 0;
+      /* shorthand for top:0; left:0; right:0; bottom:0 */
       width: 100%;
       height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4);
-      /* Semi-transparent background */
-      padding-top: 60px;
-      transition: all 0.3s ease-in-out;
-      /* Smooth transition for modal visibility */
-    }
-
-    .modal-content {
-      background-color: #fff;
-      margin: 5% auto;
+      background: rgba(0, 0, 0, 0.5);
+      /* Slightly darker for focus */
+      backdrop-filter: blur(2px);
+      /* Subtle background blur */
       padding: 20px;
-      border-radius: 12px;
-      /* Rounded corners */
-      width: 50%;
-      /* Adjust width as needed */
-      max-width: 500px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      /* Light shadow for depth */
-      transition: all 0.3s ease-in-out;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
-    /* Modal Header */
+    /* Modal Content */
+    .modal-content {
+      background: #fff;
+      margin: 50px auto;
+      padding: 25px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.4s ease;
+    }
+
+    /* Header */
     .modal-header {
-      font-size: 1.5em;
-      font-weight: bold;
+      font-size: 1.8em;
+      font-weight: 600;
       margin-bottom: 20px;
       text-align: center;
-      color: #333;
-      font-family: 'Arial', sans-serif;
+      color: #222;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Modal Input Fields */
+    /* Input Group */
     .input-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .input-group label {
       font-size: 1em;
-      margin-bottom: 5px;
-      color: #555;
+      margin-bottom: 8px;
+      color: #666;
       display: block;
     }
 
     .input-group input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       font-size: 1em;
-      border-radius: 8px;
-      /* Rounded input fields */
+      border-radius: 10px;
       border: 1px solid #ccc;
       margin-top: 5px;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .input-group input:focus {
       border-color: #007bff;
-      /* Change border color when focused */
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
       outline: none;
     }
 
-    /* Buttons */
+    /* Footer Buttons */
     .modal-footer {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
+      gap: 10px;
+      margin-top: 25px;
     }
 
     button {
-      padding: 10px 20px;
+      flex: 1;
+      padding: 12px;
       font-size: 1em;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     button:hover {
-      background-color: #007bff;
-      /* Button hover color */
-      color: white;
+      transform: translateY(-2px);
     }
 
     button.cancel-btn {
       background-color: #f44336;
-      /* Red color for cancel */
       color: white;
     }
 
     button.submit-btn {
       background-color: #4caf50;
-      /* Green color for submit */
       color: white;
+    }
+
+    button.cancel-btn:hover {
+      background-color: #d32f2f;
+    }
+
+    button.submit-btn:hover {
+      background-color: #388e3c;
     }
 
     /* Close Button */
     .close-btn {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 15px;
+      right: 15px;
       font-size: 1.5em;
+      font-weight: bold;
+      color: #555;
       cursor: pointer;
-      color: #333;
+      transition: color 0.2s ease;
     }
 
     .close-btn:hover {
       color: #f44336;
-      /* Red color when hovering */
     }
 
-    /* Show modal animation */
-    @keyframes modalOpen {
+    /* Animations */
+    @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(-50px);
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
       }
 
       to {
@@ -456,11 +467,7 @@
       }
     }
 
-    .modal-content {
-      animation: modalOpen 0.3s ease-out;
-    }
-
-    /* Initially hide the modals */
+    /* Initially hide modals */
     #newChatModal,
     #chatDetailsModal {
       display: none;
@@ -581,6 +588,12 @@
       <span class="close-btn" id="closeChatDetailsModalBtn">&times;</span>
       <div class="modal-header" id="chatDetailsTitle"></div>
       <div id="userInputArea"></div>
+
+      <!-- Warning message section -->
+      <div id="warningMessage" class="warning-message" style="display: none; color: red; font-size: 14px;">
+        <p>Please ensure all fields are correctly filled out.</p>
+      </div>
+
       <div class="modal-footer">
         <button class="submit-btn" id="submitChatDetailsBtn">Submit</button>
         <button class="cancel-btn" id="closeChatDetailsModalBtnBottom">Close</button>
@@ -590,6 +603,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -603,23 +617,49 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const currentUsername = "user_1"; // your logged-in username
+    const auth = getAuth();
+
+    let currentUsername = null;
     let currentChatId = null;
 
-    // Utility: Modal functions
+    // Check authentication state and redirect if not authenticated
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html"; // Redirect to login page if not authenticated
+      } else {
+        currentUsername = user.uid;  // Set UID as current username
+        // Initialize chat interface
+        initializeAppForUser(user);
+      }
+    });
+
+    // Initialize chat interface for the logged-in user
+    function initializeAppForUser(user) {
+      // Your existing initialization code for the chat interface
+      listenToChatListChanges();
+    }
+
+    // Modal utility functions
     function openModal(id) {
       document.getElementById(id).style.display = "block";
     }
+
     function closeModal(id) {
       document.getElementById(id).style.display = "none";
     }
 
-    // Modal button event listeners
-    document.getElementById("newChatButton").addEventListener("click", () => openModal("newChatModal"));
-    document.getElementById("closeModalBtn").addEventListener("click", () => closeModal("newChatModal"));
-    document.getElementById("closeModalBtnBottom").addEventListener("click", () => closeModal("newChatModal"));
-    document.getElementById("closeChatDetailsModalBtn").addEventListener("click", () => closeModal("chatDetailsModal"));
-    document.getElementById("closeChatDetailsModalBtnBottom").addEventListener("click", () => closeModal("chatDetailsModal"));
+    // Warning message utilities
+    function showWarningMessage(message) {
+      const warningDiv = document.getElementById("warningMessage");
+      warningDiv.style.display = "block";
+      warningDiv.innerHTML = `<p>${message}</p>`;
+    }
+
+    function hideWarningMessage() {
+      const warningDiv = document.getElementById("warningMessage");
+      warningDiv.style.display = "none";
+      warningDiv.innerHTML = "";
+    }
 
     // New Chat button handlers
     document.getElementById("newGroupBtn").addEventListener("click", () => {
@@ -645,45 +685,42 @@
       document.getElementById("userInputArea").innerHTML = `
         <div style="margin-bottom: 15px;">
           <label for="personalChatUserInput" style="display: block; margin-bottom: 5px; font-weight: bold;">Enter username:</label>
-          <input type="text" id="personalChatUserInput" placeholder="User name here..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+          <input type="text" id="personalChatUserInput" placeholder="Username here..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
         </div>
       `;
     });
 
-    // Submit new chat
-    document.getElementById("submitChatDetailsBtn").addEventListener("click", async () => {
-      let members = [];
-      let chatName = "";
+    // Helper functions
+    function isValidUsername(username) {
+      const regex = /^[a-zA-Z0-9_]+$/;
+      return regex.test(username);
+    }
 
-      if (document.getElementById("groupChatNameInput")) {
-        chatName = document.getElementById("groupChatNameInput").value.trim();
-        members = document.getElementById("groupMembersInput").value.split(',').map(item => item.trim());
+    async function checkIfUsernameExists(username) {
+      const userRef = collection(db, "users");
+      const q = query(userRef, where("username", "==", username));
+      const snapshot = await getDocs(q);
+      return !snapshot.empty;
+    }
 
-        if (!chatName) {
-          alert("Please enter a group name.");
-          return;
-        }
-        if (members.length < 2) {
-          alert("You need at least 2 members for a group chat.");
-          return;
-        }
+    // Create or Join a personal chat
+    async function createOrJoinChat(username) {
+      username = username.trim();
 
-        await createGroupChat(chatName, null, members);
-      } else {
-        const username = document.getElementById("personalChatUserInput").value.trim();
-        if (!username) {
-          alert("Please enter a username.");
-          return;
-        }
-
-        await createOrJoinChat(username);
+      if (!username || !isValidUsername(username)) {
+        showWarningMessage("Invalid username. Please enter a valid username (alphanumeric and underscores only).");
+        return;
       }
 
-      closeModal("chatDetailsModal");
-    });
+      const usernameExists = await checkIfUsernameExists(username);
+      if (!usernameExists) {
+        showWarningMessage("Username does not exist. Please try again.");
+        return;
+      }
 
-    // Create or Join personal chat
-    async function createOrJoinChat(username) {
+      hideWarningMessage();
+
+      // Check if personal chat already exists
       const q = query(
         collection(db, "chats"),
         where("type", "==", "personal"),
@@ -707,9 +744,25 @@
 
       document.getElementById("chatHeader").innerText = username;
       listenToMessages();
+      closeModal("chatDetailsModal");
     }
 
+    // Group Chat Creation
     async function createGroupChat(groupName, projectId, members) {
+      for (let member of members) {
+        if (!isValidUsername(member)) {
+          showWarningMessage(`Invalid username: ${member}`);
+          return;
+        }
+        const exists = await checkIfUsernameExists(member);
+        if (!exists) {
+          showWarningMessage(`Username not found: ${member}`);
+          return;
+        }
+      }
+
+      hideWarningMessage();
+
       if (!members.includes(currentUsername)) members.push(currentUsername);
       members = [...new Set(members)];
 
@@ -732,8 +785,10 @@
       currentChatId = groupRef.id;
       document.getElementById("chatHeader").innerText = groupName;
       listenToMessages();
+      closeModal("chatDetailsModal");
     }
 
+    // Personal Chat Creation
     async function createPersonalChat(username, members) {
       const chatRef = await addDoc(collection(db, "chats"), {
         name: username,
@@ -753,6 +808,7 @@
       return chatRef.id;
     }
 
+    // Chat List Rendering
     function renderChatItem(docSnap) {
       const chat = docSnap.data();
       const chatId = docSnap.id;
@@ -776,6 +832,7 @@
       document.getElementById("chatList").appendChild(chatItem);
     }
 
+    // Listen for changes in chat list
     function listenToChatListChanges() {
       const chatListDiv = document.getElementById("chatList");
       const q = query(
@@ -792,6 +849,7 @@
       });
     }
 
+    // Send message
     async function sendMessage() {
       const msgInput = document.getElementById("messageInput");
       const msg = msgInput.value.trim();
@@ -811,6 +869,7 @@
       }
     }
 
+    // Listen to messages
     function listenToMessages() {
       const messagesRef = collection(db, "chats", currentChatId, "messages");
       const q = query(messagesRef, orderBy("timestamp"));
@@ -833,9 +892,12 @@
           msgDiv.appendChild(bubble);
           messagesDiv.appendChild(msgDiv);
         });
+
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       });
     }
 
+    // Listeners
     document.getElementById("sendButton").addEventListener("click", sendMessage);
     document.getElementById("messageInput").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -844,6 +906,28 @@
       }
     });
 
+    document.getElementById("submitChatDetailsBtn").addEventListener("click", async () => {
+      const title = document.getElementById("chatDetailsTitle").innerText;
+      if (title.includes("Group")) {
+        const groupName = document.getElementById("groupChatNameInput")?.value.trim();
+        const groupMembersInput = document.getElementById("groupMembersInput")?.value.trim();
+        if (!groupName || !groupMembersInput) {
+          showWarningMessage("Please fill out all fields.");
+          return;
+        }
+        const members = groupMembersInput.split(",").map(x => x.trim()).filter(Boolean);
+        await createGroupChat(groupName, null, members);
+      } else if (title.includes("Personal")) {
+        const username = document.getElementById("personalChatUserInput")?.value.trim();
+        if (!username) {
+          showWarningMessage("Please enter a username.");
+          return;
+        }
+        await createOrJoinChat(username);
+      }
+    });
+
+    // Start listening for chat list updates
     listenToChatListChanges();
   </script>
 
