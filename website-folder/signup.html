@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TeamSync - Sign Up</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Up - TeamSync</title>
   <style>
-    /* Styles for the page */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
+    
     body {
       height: 100vh;
       background: linear-gradient(to right, #e0f7fa, #fdfbfb);
@@ -87,46 +85,29 @@
       font-size: 0.9rem;
     }
 
-    .login-link {
+    p {
       margin-top: 1rem;
-      font-size: 1rem;
-    }
-
-    .login-link a {
-      color: #2563eb;
-      text-decoration: none;
-    }
-
-    .login-link a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
-
 <body>
-
   <div class="signup-box">
     <h2>Create Your TeamSync Account</h2>
     <form id="signupForm">
       <input type="email" id="email" placeholder="Email" required />
-      <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Sign Up</button>
       <p class="error" id="errorMessage"></p>
     </form>
-
-    <div class="login-link">
-      <p>Already have an account? <a href="login.html">Login here</a></p>
-    </div>
+    <p>Already have an account? <a href="login.html">Login</a></p>
   </div>
 
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-    // Your web app's Firebase configuration
+    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
       authDomain: "teamsync-28a36.firebaseapp.com",
@@ -139,31 +120,22 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
-    // Handle signup form submission
+    // Handle sign up form submission
     const signupForm = document.getElementById("signupForm");
     const errorMessage = document.getElementById("errorMessage");
 
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
-      const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
       try {
-        // Create user with email and password
+        // Create a new user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Save user data to Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          email: email,
-          username: username,
-          createdAt: new Date()
-        });
-
-        // Redirect to index.html after successful signup
+        // Redirect to the index page after successful signup
         window.location.href = "index.html";
       } catch (error) {
         // Display error message if something goes wrong
@@ -171,7 +143,5 @@
       }
     });
   </script>
-
 </body>
-
 </html>
