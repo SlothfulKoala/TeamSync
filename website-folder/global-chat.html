@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Global Chat - TeamSync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: sans-serif;
+    }
+
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background-color: #1f2937;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .sidebar.collapsed {
+      width: 60px;
+    }
+
+    .nav-links {
+      list-style: none;
+      padding: 0.25rem 0;
+    }
+
+    .nav-links li {
+      margin: 0.25rem 0;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      transition: background 0.2s;
+    }
+
+    .nav-links a:hover {
+      background-color: #374151;
+      border-radius: 8px;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .text {
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
+
+    .sidebar.collapsed .text {
+      display: none;
+    }
+
+    .toggle-link {
+      cursor: pointer;
+    }
+
+    .sidebar-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-top {
+      margin-top: 0.5rem;
+    }
+
+    .project-links {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #374151;
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    .settings-link {
+      margin-bottom: 1rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background-color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+      margin-left: 220px;
+      /* Match the sidebar width */
+      transition: margin-left 0.3s ease;
+      /* Add transition for smooth collapsing */
+    }
+
+    .sidebar.collapsed+.main-content {
+      margin-left: 60px;
+      /* Match the collapsed sidebar width */
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .topbar .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .topbar .right-icons span {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .topbar-link {
+      text-decoration: none;
+      color: black;
+    }
+
+    /* Chat Layout */
+    .chat-container {
+      display: flex;
+      height: 100%;
+    }
+
+    /* Chat Sidebar */
+    .chat-sidebar {
+      width: 300px;
+      background-color: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-sidebar-header {
+      padding: 1rem;
+      background-color: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: bold;
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      height: 100%;
+      position: relative;
+    }
+
+    .chat-list-item {
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chat-list-item:hover {
+      background-color: #f3f4f6;
+    }
+
+    .chat-list-item .avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #e5e7eb;
+      border-radius: 50%;
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #4b5563;
+    }
+
+    .chat-list-item .chat-info {
+      flex: 1;
+    }
+
+    .chat-list-item .chat-info .name {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .chat-list-item .chat-info .last-message {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    /* Chat Area */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 1rem;
+      background-color: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .message {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .message.sent {
+      justify-content: flex-end;
+    }
+
+    .message .bubble {
+      max-width: 60%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .message.sent .bubble {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .chat-input {
+      padding: 1rem;
+      background-color: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+
+    .chat-input button {
+      padding: 0.75rem 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .chat-input button:hover {
+      background-color: #2563eb;
+    }
+
+    .new-chat-button {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      margin: 10px;
+      background-color: #4f46e5;
+      /* Indigo */
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .new-chat-button:hover {
+      background-color: #4338ca;
+      /* Darker indigo on hover */
+      transform: translateY(-2px);
+    }
+
+    .new-chat-button:active {
+      transform: translateY(0);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      /* shorthand for top:0; left:0; right:0; bottom:0 */
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      /* Slightly darker for focus */
+      backdrop-filter: blur(2px);
+      /* Subtle background blur */
+      padding: 20px;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background: #fff;
+      margin: 50px auto;
+      padding: 25px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.4s ease;
+    }
+
+    /* Header */
+    .modal-header {
+      font-size: 1.8em;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #222;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Input Group */
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-group label {
+      font-size: 1em;
+      margin-bottom: 8px;
+      color: #666;
+      display: block;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-group input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+      outline: none;
+    }
+
+    /* Footer Buttons */
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button.cancel-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    button.submit-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    button.cancel-btn:hover {
+      background-color: #d32f2f;
+    }
+
+    button.submit-btn:hover {
+      background-color: #388e3c;
+    }
+
+    /* Close Button */
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #555;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+      color: #f44336;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Initially hide modals */
+    #newChatModal,
+    #chatDetailsModal {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Sidebar from index.html -->
+    <!-- Sidebar from index.html -->
+    <aside class="sidebar collapsed" id="sidebar">
+      <!-- Scrollable top section -->
+      <div class="sidebar-content">
+        <!-- Static nav section -->
+        <ul class="nav-links nav-top">
+          <!-- Toggle Button -->
+          <li>
+            <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+              <span class="icon">☰</span>
+              <span class="text" id="logoText">TeamSync</span>
+            </a>
+          </li>
+
+          <!-- Profile -->
+          <li>
+            <a href="#">
+              <span class="icon">👤</span>
+              <span class="text">Your Profile</span>
+            </a>
+          </li>
+
+          <!-- Dashboard -->
+          <li><a href="index.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
+
+          <!-- Projects (moved from project-links) -->
+          <li>
+            <a href="project.html">
+              <span class="icon">📁</span>
+              <span class="text">Projects</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Empty container to maintain structure -->
+        <div class="spacer"></div>
+      </div>
+
+      <!-- Bottom Section - Settings stays at the bottom -->
+      <ul class="nav-links">
+        <li class="settings-link">
+          <a href="#">
+            <span class="icon">⚙️</span>
+            <span class="text">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <!-- Topbar from index.html -->
+      <div class="topbar">
+        <div class="page-title">
+          <a href="index.html" class="topbar-link">
+            <h2>TeamSync</h2>
+          </a>
+        </div>
+        <div class="right-icons">
+          <span title="Notifications">🔔</span>
+          <span title="Profile">👤</span>
+        </div>
+      </div>
+
+      <!-- Chat Layout -->
+      <div class="chat-container">
+        <!-- Chat Sidebar -->
+        <div class="chat-sidebar">
+          <div class="chat-sidebar-header">Chats</div>
+          <div class="chat-list" id="chatList"></div>
+          <div id="newChatButton" class="new-chat-button">
+            <span>+ New Chat / Group</span>
+          </div>
+
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+          <div class="chat-header">
+            <div id="chatHeader">Alice</div>
+          </div>
+          <div id="messages" class="chat-messages"></div>
+          <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type a message..." />
+            <button id="sendButton">Send</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Chat Modal -->
+  <div id="newChatModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModalBtn">&times;</span>
+      <div class="modal-header">Create New Chat</div>
+      <div class="modal-footer">
+        <button id="newGroupBtn" class="submit-btn">Create Group Chat</button>
+        <button id="newPersonalChatBtn" class="submit-btn">Create Personal Chat</button>
+        <button class="cancel-btn" id="closeModalBtnBottom">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Details Modal -->
+  <div id="chatDetailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeChatDetailsModalBtn">&times;</span>
+      <div class="modal-header" id="chatDetailsTitle"></div>
+      <div id="userInputArea"></div>
+
+      <!-- Warning message section -->
+      <div id="warningMessage" class="warning-message" style="display: none; color: red; font-size: 14px;">
+        <p>Please ensure all fields are correctly filled out.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="submit-btn" id="submitChatDetailsBtn">Submit</button>
+        <button class="cancel-btn" id="closeChatDetailsModalBtnBottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+      authDomain: "teamsync-28a36.firebaseapp.com",
+      projectId: "teamsync-28a36",
+      storageBucket: "teamsync-28a36.appspot.com",
+      messagingSenderId: "518634293938",
+      appId: "1:518634293938:web:2c94b73b69c20349ae57ab"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    let currentUsername = null;
+    let currentChatId = null;
+
+    // Check authentication state and redirect if not authenticated
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html"; // Redirect to login page if not authenticated
+      } else {
+        currentUsername = user.uid;  // Set UID as current username
+        // Initialize chat interface
+        initializeAppForUser(user);
+      }
+    });
+
+    // Initialize chat interface for the logged-in user
+    function initializeAppForUser(user) {
+      // Your existing initialization code for the chat interface
+      listenToChatListChanges();
+    }
+
+    // Modal utility functions
+    function openModal(id) {
+      document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    // Warning message utilities
+    function showWarningMessage(message) {
+      const warningDiv = document.getElementById("warningMessage");
+      warningDiv.style.display = "block";
+      warningDiv.innerHTML = `<p>${message}</p>`;
+    }
+
+    function hideWarningMessage() {
+      const warningDiv = document.getElementById("warningMessage");
+      warningDiv.style.display = "none";
+      warningDiv.innerHTML = "";
+    }
+
+    // New Chat button handlers
+    document.getElementById("newGroupBtn").addEventListener("click", () => {
+      closeModal("newChatModal");
+      openModal("chatDetailsModal");
+      document.getElementById("chatDetailsTitle").innerText = "Create Group Chat";
+      document.getElementById("userInputArea").innerHTML = `
+        <div style="margin-bottom: 15px;">
+          <label for="groupChatNameInput" style="display: block; margin-bottom: 5px; font-weight: bold;">Group Name:</label>
+          <input type="text" id="groupChatNameInput" placeholder="Group Name" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label for="groupMembersInput" style="display: block; margin-bottom: 5px; font-weight: bold;">Enter usernames (comma separated):</label>
+          <input type="text" id="groupMembersInput" placeholder="Usernames here..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+      `;
+    });
+
+    document.getElementById("newPersonalChatBtn").addEventListener("click", () => {
+      closeModal("newChatModal");
+      openModal("chatDetailsModal");
+      document.getElementById("chatDetailsTitle").innerText = "Create Personal Chat";
+      document.getElementById("userInputArea").innerHTML = `
+        <div style="margin-bottom: 15px;">
+          <label for="personalChatUserInput" style="display: block; margin-bottom: 5px; font-weight: bold;">Enter username:</label>
+          <input type="text" id="personalChatUserInput" placeholder="Username here..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+        </div>
+      `;
+    });
+
+    // Helper functions
+    function isValidUsername(username) {
+      const regex = /^[a-zA-Z0-9_]+$/;
+      return regex.test(username);
+    }
+
+    async function checkIfUsernameExists(username) {
+      const userRef = collection(db, "users");
+      const q = query(userRef, where("username", "==", username));
+      const snapshot = await getDocs(q);
+      return !snapshot.empty;
+    }
+
+    // Create or Join a personal chat
+    async function createOrJoinChat(username) {
+      username = username.trim();
+
+      if (!username || !isValidUsername(username)) {
+        showWarningMessage("Invalid username. Please enter a valid username (alphanumeric and underscores only).");
+        return;
+      }
+
+      const usernameExists = await checkIfUsernameExists(username);
+      if (!usernameExists) {
+        showWarningMessage("Username does not exist. Please try again.");
+        return;
+      }
+
+      hideWarningMessage();
+
+      // Check if personal chat already exists
+      const q = query(
+        collection(db, "chats"),
+        where("type", "==", "personal"),
+        where("members", "array-contains", currentUsername)
+      );
+      const snapshot = await getDocs(q);
+
+      let foundChat = null;
+      snapshot.forEach(docSnap => {
+        const chat = docSnap.data();
+        if (chat.members.includes(username)) {
+          foundChat = docSnap;
+        }
+      });
+
+      if (foundChat) {
+        currentChatId = foundChat.id;
+      } else {
+        currentChatId = await createPersonalChat(username, [currentUsername, username]);
+      }
+
+      document.getElementById("chatHeader").innerText = username;
+      listenToMessages();
+      closeModal("chatDetailsModal");
+    }
+
+    // Group Chat Creation
+    async function createGroupChat(groupName, projectId, members) {
+      for (let member of members) {
+        if (!isValidUsername(member)) {
+          showWarningMessage(`Invalid username: ${member}`);
+          return;
+        }
+        const exists = await checkIfUsernameExists(member);
+        if (!exists) {
+          showWarningMessage(`Username not found: ${member}`);
+          return;
+        }
+      }
+
+      hideWarningMessage();
+
+      if (!members.includes(currentUsername)) members.push(currentUsername);
+      members = [...new Set(members)];
+
+      const groupRef = await addDoc(collection(db, "chats"), {
+        name: groupName,
+        type: "group",
+        members: members,
+        projectId: projectId || null,
+        createdAt: serverTimestamp(),
+        lastMessageAt: serverTimestamp()
+      });
+
+      await addDoc(collection(db, "chats", groupRef.id, "messages"), {
+        text: `Welcome to ${groupName}!`,
+        senderName: "System",
+        senderId: "system",
+        timestamp: serverTimestamp()
+      });
+
+      currentChatId = groupRef.id;
+      document.getElementById("chatHeader").innerText = groupName;
+      listenToMessages();
+      closeModal("chatDetailsModal");
+    }
+
+    // Personal Chat Creation
+    async function createPersonalChat(username, members) {
+      const chatRef = await addDoc(collection(db, "chats"), {
+        name: username,
+        type: "personal",
+        members: members,
+        createdAt: serverTimestamp(),
+        lastMessageAt: serverTimestamp()
+      });
+
+      await addDoc(collection(db, "chats", chatRef.id, "messages"), {
+        text: `You started a chat with ${username}.`,
+        senderName: "System",
+        senderId: "system",
+        timestamp: serverTimestamp()
+      });
+
+      return chatRef.id;
+    }
+
+    // Chat List Rendering
+    function renderChatItem(docSnap) {
+      const chat = docSnap.data();
+      const chatId = docSnap.id;
+
+      const chatItem = document.createElement("div");
+      chatItem.classList.add("chat-list-item");
+      chatItem.innerHTML = `
+        <div class="avatar">${chat.name.charAt(0).toUpperCase()}</div>
+        <div class="chat-info">
+          <div class="name">${chat.name}</div>
+          <div class="last-message">Click to open</div>
+        </div>
+      `;
+
+      chatItem.addEventListener("click", () => {
+        currentChatId = chatId;
+        document.getElementById("chatHeader").innerText = chat.name;
+        listenToMessages();
+      });
+
+      document.getElementById("chatList").appendChild(chatItem);
+    }
+
+    // Listen for changes in chat list
+    function listenToChatListChanges() {
+      const chatListDiv = document.getElementById("chatList");
+      const q = query(
+        collection(db, "chats"),
+        where("members", "array-contains", currentUsername),
+        orderBy("lastMessageAt", "desc")
+      );
+
+      onSnapshot(q, (snapshot) => {
+        chatListDiv.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          renderChatItem(docSnap);
+        });
+      });
+    }
+
+    // Send message
+    async function sendMessage() {
+      const msgInput = document.getElementById("messageInput");
+      const msg = msgInput.value.trim();
+      if (msg && currentChatId) {
+        await addDoc(collection(db, "chats", currentChatId, "messages"), {
+          text: msg,
+          senderId: currentUsername,
+          senderName: "You",
+          timestamp: serverTimestamp()
+        });
+
+        await updateDoc(doc(db, "chats", currentChatId), {
+          lastMessageAt: serverTimestamp()
+        });
+
+        msgInput.value = "";
+      }
+    }
+
+    // Listen to messages
+    function listenToMessages() {
+      const messagesRef = collection(db, "chats", currentChatId, "messages");
+      const q = query(messagesRef, orderBy("timestamp"));
+
+      onSnapshot(q, (snapshot) => {
+        const messagesDiv = document.getElementById("messages");
+        messagesDiv.innerHTML = "";
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const msgDiv = document.createElement("div");
+          msgDiv.classList.add("message");
+          if (data.senderId === currentUsername) {
+            msgDiv.classList.add("sent");
+          }
+
+          const bubble = document.createElement("div");
+          bubble.classList.add("bubble");
+          bubble.textContent = `${data.senderName}: ${data.text}`;
+          msgDiv.appendChild(bubble);
+          messagesDiv.appendChild(msgDiv);
+        });
+
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      });
+    }
+
+    // Listeners
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
+    document.getElementById("messageInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    document.getElementById("submitChatDetailsBtn").addEventListener("click", async () => {
+      const title = document.getElementById("chatDetailsTitle").innerText;
+      if (title.includes("Group")) {
+        const groupName = document.getElementById("groupChatNameInput")?.value.trim();
+        const groupMembersInput = document.getElementById("groupMembersInput")?.value.trim();
+        if (!groupName || !groupMembersInput) {
+          showWarningMessage("Please fill out all fields.");
+          return;
+        }
+        const members = groupMembersInput.split(",").map(x => x.trim()).filter(Boolean);
+        await createGroupChat(groupName, null, members);
+      } else if (title.includes("Personal")) {
+        const username = document.getElementById("personalChatUserInput")?.value.trim();
+        if (!username) {
+          showWarningMessage("Please enter a username.");
+          return;
+        }
+        await createOrJoinChat(username);
+      }
+    });
+
+    // Start listening for chat list updates
+    listenToChatListChanges();
+  </script>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const logoText = document.getElementById("logoText");
+
+      sidebar.classList.toggle("collapsed");
+
+      if (sidebar.classList.contains("collapsed")) {
+        logoText.textContent = "";
+      } else {
+        logoText.textContent = "TeamSync";
+      }
+    }
+  </script>
+</body>
+
+</html>
