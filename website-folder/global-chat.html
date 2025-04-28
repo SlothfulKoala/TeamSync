@@ -11,17 +11,18 @@
       padding: 0;
       box-sizing: border-box;
     }
-  
-    html, body {
+
+    html,
+    body {
       height: 100%;
       font-family: sans-serif;
     }
-  
+
     .app-container {
       display: flex;
       height: 100vh;
     }
-  
+
     /* Sidebar */
     .sidebar {
       width: 220px;
@@ -35,20 +36,20 @@
       flex-direction: column;
       z-index: 10;
     }
-  
+
     .sidebar.collapsed {
       width: 60px;
     }
-  
+
     .nav-links {
       list-style: none;
       padding: 0.25rem 0;
     }
-  
+
     .nav-links li {
       margin: 0.25rem 0;
     }
-  
+
     .nav-links a {
       color: white;
       text-decoration: none;
@@ -57,45 +58,45 @@
       padding: 0.75rem 1rem;
       transition: background 0.2s;
     }
-  
+
     .nav-links a:hover {
       background-color: #374151;
       border-radius: 8px;
     }
-  
+
     .icon {
       font-size: 1.2rem;
       width: 24px;
       text-align: center;
     }
-  
+
     .text {
       margin-left: 1rem;
       white-space: nowrap;
     }
-  
+
     .sidebar.collapsed .text {
       display: none;
     }
-  
+
     .toggle-link {
       cursor: pointer;
     }
-  
+
     .sidebar-content {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
     }
-  
+
     .nav-top {
       margin-top: 0.5rem;
     }
-  
+
     .settings-link {
       margin-bottom: 1rem;
     }
-  
+
     /* Main Content */
     .main-content {
       flex: 1;
@@ -105,11 +106,11 @@
       margin-left: 220px;
       transition: margin-left 0.3s ease;
     }
-  
-    .sidebar.collapsed + .main-content {
+
+    .sidebar.collapsed+.main-content {
       margin-left: 60px;
     }
-  
+
     /* Topbar */
     .topbar {
       display: flex;
@@ -119,29 +120,29 @@
       background-color: white;
       border-bottom: 1px solid #e5e7eb;
     }
-  
+
     .topbar .right-icons {
       display: flex;
       align-items: center;
       gap: 1.5rem;
     }
-  
+
     .topbar .right-icons span {
       font-size: 1.2rem;
       cursor: pointer;
     }
-  
+
     .topbar-link {
       text-decoration: none;
       color: black;
     }
-  
+
     /* Chat Layout */
     .chat-container {
       display: flex;
       height: 100%;
     }
-  
+
     .chat-sidebar {
       width: 300px;
       background-color: #ffffff;
@@ -149,27 +150,27 @@
       display: flex;
       flex-direction: column;
     }
-  
+
     .chat-sidebar-header {
       padding: 1rem;
       background-color: #f9fafb;
       border-bottom: 1px solid #e5e7eb;
       font-weight: bold;
     }
-  
+
     .chat-list {
       flex: 1;
       overflow-y: auto;
       height: 100%;
       position: relative;
     }
-  
+
     .chat-area {
       flex: 1;
       display: flex;
       flex-direction: column;
     }
-  
+
     .chat-header {
       padding: 1rem;
       background-color: #ffffff;
@@ -178,7 +179,7 @@
       align-items: center;
       justify-content: space-between;
     }
-  
+
     .chat-messages {
       flex: 1;
       padding: 1rem;
@@ -186,7 +187,7 @@
       background-color: #f9fafb;
       border: 1px solid #e5e7eb;
     }
-  
+
     .chat-input {
       padding: 1rem;
       background-color: #ffffff;
@@ -195,7 +196,7 @@
       align-items: center;
       gap: 0.5rem;
     }
-  
+
     .chat-input input {
       flex: 4;
       padding: 0.65rem 0.75rem;
@@ -203,7 +204,7 @@
       border-radius: 8px;
       font-size: 1rem;
     }
-  
+
     .chat-input button {
       padding: 0.5rem 1rem;
       background-color: #3b82f6;
@@ -213,11 +214,11 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
-  
+
     .chat-input button:hover {
       background-color: #2563eb;
     }
-  
+
     .new-chat-button {
       position: sticky;
       bottom: 0;
@@ -233,16 +234,16 @@
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.2s ease;
     }
-  
+
     .new-chat-button:hover {
       background-color: #4338ca;
       transform: translateY(-2px);
     }
-  
+
     .new-chat-button:active {
       transform: translateY(0);
     }
-  
+
     /* Modal Styles */
     .modal {
       display: none;
@@ -257,7 +258,7 @@
       overflow-y: auto;
       animation: fadeIn 0.3s ease-in-out;
     }
-  
+
     .modal-content {
       background: #fff;
       margin: 50px auto;
@@ -269,7 +270,7 @@
       animation: slideDown 0.4s ease;
       position: relative;
     }
-  
+
     .modal-header {
       font-size: 1.8em;
       font-weight: 600;
@@ -278,14 +279,14 @@
       color: #222;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-  
+
     .modal-footer {
       display: flex;
       justify-content: space-between;
       gap: 10px;
       margin-top: 25px;
     }
-  
+
     button {
       flex: 1;
       padding: 12px;
@@ -295,29 +296,29 @@
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.2s ease;
     }
-  
+
     button:hover {
       transform: translateY(-2px);
     }
-  
+
     button.cancel-btn {
       background-color: #f44336;
       color: white;
     }
-  
+
     button.submit-btn {
       background-color: #4caf50;
       color: white;
     }
-  
+
     button.cancel-btn:hover {
       background-color: #d32f2f;
     }
-  
+
     button.submit-btn:hover {
       background-color: #388e3c;
     }
-  
+
     .close-btn {
       position: absolute;
       top: 15px;
@@ -328,28 +329,34 @@
       cursor: pointer;
       transition: color 0.2s ease;
     }
-  
+
     .close-btn:hover {
       color: #f44336;
     }
-  
+
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
-  
+
     @keyframes slideDown {
       from {
         opacity: 0;
         transform: translateY(-20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
   </style>
-  
+
 </head>
 
 <body>
@@ -470,13 +477,16 @@
     let currentMode = null; // 'personal' or 'group'
 
     onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user); // Add this log for debugging
       if (!user) {
+        console.log("No user logged in, redirecting to Login.html"); // Add this log for debugging
         window.location.href = "login.html";
       } else {
         currentUsername = user.uid;
         initializeAppForUser(user);
       }
     });
+
 
     function initializeAppForUser(user) {
       listenToChatListChanges();
@@ -704,6 +714,7 @@
       if (e.key === "Enter") sendMessage();
     });
   </script>
+
 
 
   <script>
