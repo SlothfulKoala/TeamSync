@@ -2,565 +2,419 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TeamSync - Projects</title>
-    <style>
-        /* Global Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TeamSync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        html,
-        body {
-            height: 100%;
-            font-family: sans-serif;
-            background: #f3f4f6;
-        }
+    html,
+    body {
+      height: 100%;
+      font-family: sans-serif;
+    }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-        }
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
 
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
-            background-color: #1f2937;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            transition: width 0.3s ease;
-            overflow: hidden;
-        }
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background-color: #1f2937;
+      color: white;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .sidebar.collapsed {
-            width: 60px;
-        }
+    .sidebar.collapsed {
+      width: 60px;
+    }
 
-        .nav-links {
-            list-style: none;
-            padding: 0.25rem 0;
-        }
+    .nav-links {
+      list-style: none;
+      padding: 0.25rem 0;
+    }
 
-        .nav-links li {
-            margin: 0.25rem 0;
-        }
+    .nav-links li {
+      margin: 0.25rem 0;
+    }
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            transition: background 0.2s;
-        }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      transition: background 0.2s;
+    }
 
-        .nav-links a:hover {
-            background-color: #374151;
-            border-radius: 8px;
-        }
+    .nav-links a:hover {
+      background-color: #374151;
+      border-radius: 8px;
+    }
 
-        .icon {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
+    .icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
 
-        .text {
-            margin-left: 1rem;
-            white-space: nowrap;
-        }
+    .text {
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
 
-        .sidebar.collapsed .text {
-            display: none;
-        }
+    .sidebar.collapsed .text {
+      display: none;
+    }
 
-        .toggle-link {
-            cursor: pointer;
-        }
+    .toggle-link {
+      cursor: pointer;
+    }
 
-        .sidebar-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
+    .sidebar-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .nav-top {
-            margin-top: 0.5rem;
-        }
+    .nav-top {
+      margin-top: 0.5rem;
+    }
 
-        /* Main Content & Topbar */
-        .main-content {
-            flex: 1;
-            background-color: #f3f4f6;
-            display: flex;
-            flex-direction: column;
-        }
+    .project-links {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #374151;
+      overflow-y: auto;
+      max-height: 100%;
+    }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background-color: white;
-            border-bottom: 1px solid #e5e7eb;
-        }
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background-color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .topbar .page-title h2 {
-            font-size: 1.5rem;
-        }
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-        .topbar .right-icons span {
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
+    .topbar .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
 
-        /* Content Area */
-        .content-area {
-            padding: 1.25rem;
-            overflow-y: auto;
-            flex: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .topbar .right-icons span {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
 
-        /* Button to create new project */
-        #newProjectBtn {
-            padding: 0.75rem 1.5rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background 0.2s;
-        }
+    /* Content Area */
+    .content-area {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+      max-width: 1200px;
+      /* Maximum width for large screens */
+      margin: 0 auto;
+      /* Center the content */
+      padding: 20px;
+    }
 
-        #newProjectBtn:hover {
-            background-color: #2563eb;
-        }
+    .content-box {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
 
-        /* Project Bubble Cards */
-        .project-bubble {
-            background: #fff;
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            position: relative;
-        }
+    .dashboard-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      /* Add space between the cards */
+    }
 
-        .project-bubble:hover {
-            transform: scale(1.02);
-        }
+    .dashboard-card {
+      flex: 1 1 calc(25% - 20px);
+      /* Adjust size to fit within the container */
+      min-width: 250px;
+      /* Minimum width for responsiveness */
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
 
-        .delete-project-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #e3342f;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 5px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+    }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            /* Hidden by default */
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+    .dashboard-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            position: relative;
-        }
+    .dashboard-card p {
+      font-size: 1rem;
+      color: #4b5563;
+    }
 
-        .modal-content h3 {
-            margin-bottom: 1rem;
-            text-align: center;
-        }
+    /* Hero Section */
+    .hero-section {
+      background: #f9fafb;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
 
-        .modal-content label {
-            display: block;
-            margin: 10px 0 5px;
-        }
+    .hero-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
 
-        .modal-content input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    .hero-section p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
 
-        .modal-content button {
-            margin-top: 1rem;
-            padding: 0.75rem 1.5rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
+    .cta-btn {
+      padding: 0.75rem 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-        .modal-content button:hover {
-            background-color: #2563eb;
-        }
+    .cta-btn:hover {
+      background-color: #2563eb;
+    }
 
-        .close {
-            position: absolute;
-            right: 10px;
-            top: 8px;
-            font-size: 24px;
-            color: #aaa;
-            cursor: pointer;
-        }
+    /* Recent Activity Section */
+    .recent-activity {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-        .close:hover {
-            color: #000;
-        }
+    .recent-activity ul {
+      list-style: none;
+    }
 
-        /* Member Search and List */
-        #memberSearchResult p {
-            margin-top: 8px;
-        }
+    .recent-activity li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-        #addedMembersList {
-            margin-top: 10px;
-            padding: 8px;
-            background-color: #f9fafb;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    /* Stats Section */
+    .stats-section {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-        .member-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px 0;
-        }
+    /* Team Members Section */
+    .team-section {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-        .member-item span {
-            flex-grow: 1;
-        }
+    .team-members {
+      list-style: none;
+    }
 
-        .delete-member-btn {
-            background: transparent;
-            border: none;
-            color: red;
-            cursor: pointer;
-        }
-    </style>
+    .team-members li {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .team-members .avatar {
+      margin-right: 1rem;
+    }
+
+    /* Deadlines Section */
+    .deadlines-section {
+      background: white;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+  </style>
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-content">
-                <!-- Navigation Links -->
-                <ul class="nav-links nav-top">
-                    <!-- Toggle Button -->
-                    <li>
-                        <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
-                            <span class="icon">☰</span>
-                            <span class="text" id="logoText">TeamSync</span>
-                        </a>
-                    </li>
-                    <!-- Profile & Other Links -->
-                    <li>
-                        <a href="profile-nw.html">
-                            <span class="icon">👤</span>
-                            <span class="text">Your Profile</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="global-chat.html">
-                            <span class="icon">💬</span>
-                            <span class="text">Chats</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="icon">📁</span>
-                            <span class="text">Projects</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </aside>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar collapsed" id="sidebar">
+      <!-- Scrollable top section -->
+      <div class="sidebar-content">
+        <!-- Static nav section -->
+        <ul class="nav-links nav-top">
+          <!-- Toggle Button -->
+          <li>
+            <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+              <span class="icon">☰</span>
+              <span class="text" id="logoText">TeamSync</span>
+            </a>
+          </li>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Topbar -->
-            <div class="topbar">
-                <div class="page-title">
-                    <h2>TeamSync</h2>
-                </div>
-                <div class="right-icons">
-                    <span title="Profile">👤</span>
-                </div>
-            </div>
+          <!-- Profile -->
+          <li>
+            <a href="profile-nw.html">
+              <span class="icon">👤</span>
+              <span class="text">Your Profile</span>
+            </a>
+          </li>
 
-            <!-- Content Area -->
-            <section class="content-area">
-                <!-- Button to Open New Project Form -->
-                <button id="newProjectBtn">Create New Project</button>
-                <!-- Container for Project Bubble Cards -->
-                <div id="projectsContainer"></div>
-            </section>
-        </main>
-    </div>
+          <li>
+            <a href="global-chat.html">
+              <span class="icon">💬</span>
+              <span class="text">Chats</span>
+            </a>
+          </li>
 
-    <!-- Modal for New Project Form -->
-    <div id="projectModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form id="projectForm">
-                <h3>Create New Project</h3>
-                <label for="projectName">Project Name</label>
-                <input type="text" id="projectName" required />
+          <li>
+            <a href="#"><span class="icon">📁</span>
+            <span class="text">Projects</span></a>
+          </li>
+        </ul>
 
-                <!-- Member Search Section -->
-                <label for="memberEmailSearch">Add Member by Email</label>
-                <input type="email" id="memberEmailSearch" placeholder="Enter user's email" />
-                <button type="button" id="searchMemberBtn">Search</button>
-                <div id="memberSearchResult"></div>
+      </div>
 
-                <!-- Display Added Members -->
-                <h4>Added Members</h4>
-                <div id="addedMembersList"></div>
+    </aside>
 
-                <!-- Final Submit -->
-                <button type="submit">Save Project</button>
-            </form>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="page-title">
+          <h2>TeamSync</h2>
         </div>
-    </div>
+        <div class="right-icons">
+          <span title="Profile">👤</span>
+        </div>
+      </div>
 
-    <script type="module">
-        // Firebase SDK imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import {
-            getFirestore,
-            collection,
-            addDoc,
-            serverTimestamp,
-            onSnapshot,
-            query,
-            where,
-            getDocs,
-            deleteDoc,
-            doc
-        } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <h2>Welcome to TeamSync</h2>
+          <p>Your centralized platform to manage projects, tasks, and team communication.</p>
+        <a href="project.html">
+            <button class="cta-btn">
+                Create/See existing Projects
+            </button>
+        </a>
+        </div>
 
-        // Replace with your Firebase project configuration
-        const firebaseConfig = {
-            apiKey:"AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
-            authDomain: "teamsync-28a36.firebaseapp.com",
-            projectId: "teamsync-28a36",
-            storageBucket: "teamsync-28a36.appspot.com",
-            messagingSenderId: "518634293938",
-            appId:"1:518634293938:web:2c94b73b69c20349ae57ab"
-        };
+        <!-- Dashboard Grid with additional sections -->
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3>📁 Projects</h3>
+            <p>2 Active Projects</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>📝 Tasks</h3>
+            <p>14 Tasks Pending</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>💬 Messages</h3>
+            <p>3 New Messages</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>🐞 Issues</h3>
+            <p>5 Open Issues</p>
+          </div>
+        </div>
 
-        // Initialize Firebase and services
-        const appFirebase = initializeApp(firebaseConfig);
-        const db = getFirestore(appFirebase);
-        const auth = getAuth();
+        <!-- Recent Activity Section -->
+        <div class="recent-activity">
+          <h3>Recent Activity</h3>
+          <ul>
+            <li>Task "Fix Bug" completed by Alice</li>
+            <li>New message from Bob: "Project A Discussion"</li>
+            <li>Project "B" status updated</li>
+          </ul>
+        </div>
 
-        // Authentication Check: Redirect to signup if not logged in.
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "signup.html";
-            } else {
-                // If the user is logged in, use their email for membership filtering.
-                const currentUserEmail = user.email;
-                const projectsContainer = document.getElementById("projectsContainer");
-                const projectsQuery = query(
-                    collection(db, "projects"),
-                    where("members", "array-contains", currentUserEmail)
-                );
-                onSnapshot(projectsQuery, (snapshot) => {
-                    projectsContainer.innerHTML = "";
-                    snapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
-                        const bubble = document.createElement("div");
-                        bubble.className = "project-bubble";
-                        bubble.innerHTML = `
-              <h3>${data.name}</h3>
-              <p>Created: ${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'Loading...'}</p>
-              <p>Members: ${data.members.join(", ")}</p>
-            `;
-                        // Delete Button inside the project bubble
-                        const deleteBtn = document.createElement("button");
-                        deleteBtn.className = "delete-project-btn";
-                        deleteBtn.textContent = "Delete";
-                        deleteBtn.addEventListener("click", (event) => {
-                            event.stopPropagation(); // Prevent bubble click navigation
-                            if (confirm("Are you sure you want to delete this project?")) {
-                                deleteDoc(doc(db, "projects", docSnap.id))
-                                    .then(() => console.log("Project deleted successfully."))
-                                    .catch(err => console.error("Error deleting project: ", err));
-                            }
-                        });
-                        bubble.appendChild(deleteBtn);
+        <!-- Stats/Charts Section -->
+        <div class="stats-section">
+          <h3>Project Completion Stats</h3>
+          <div class="chart">
+            <!-- A placeholder for a chart or progress bars -->
+            <p>70% of Project A completed</p>
+          </div>
+        </div>
 
-                        // On click, navigate to the project details page (pass project ID)
-                        bubble.addEventListener("click", () => {
-                            window.location.href = "project-details.html?id=" + docSnap.id;
-                        });
-                        projectsContainer.appendChild(bubble);
-                    });
-                });
-            }
-        });
+        <!-- Team Section -->
+        <div class="team-section">
+          <h3>Team Members Online</h3>
+          <ul class="team-members">
+            <li><span class="avatar">👤</span> Alice</li>
+            <li><span class="avatar">👤</span> Bob</li>
+          </ul>
+        </div>
 
-        // Sidebar toggle functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            const logoText = document.getElementById("logoText");
-            sidebar.classList.toggle("collapsed");
-            logoText.textContent = sidebar.classList.contains("collapsed") ? "" : "TeamSync";
-        }
-        window.toggleSidebar = toggleSidebar;
+        <!-- Upcoming Deadlines Section -->
+        <div class="deadlines-section">
+          <h3>Upcoming Deadlines</h3>
+          <ul>
+            <li>Project A deadline: April 25</li>
+            <li>Task "Bug Fix" due: April 22</li>
+          </ul>
+        </div>
+      </section>
 
-        // Modal functionality
-        const modal = document.getElementById("projectModal");
-        const closeModalBtn = document.querySelector(".modal .close");
-        const projectForm = document.getElementById("projectForm");
 
-        function openModal() {
-            modal.style.display = "block";
-        }
-        function closeModal() {
-            modal.style.display = "none";
-            clearModalFields();
-        }
-        // Clear form and reset members list
-        function clearModalFields() {
-            projectForm.reset();
-            document.getElementById("memberSearchResult").innerHTML = "";
-            addedMembers = [];
-            renderAddedMembers();
-        }
+    </main>
+  </div>
 
-        document.getElementById("newProjectBtn").addEventListener("click", openModal);
-        closeModalBtn.addEventListener("click", closeModal);
-        window.addEventListener("click", (event) => {
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const logoText = document.getElementById("logoText");
 
-        // Variable to hold added members
-        let addedMembers = [];
+      sidebar.classList.toggle("collapsed");
 
-        // Render the list of added members
-        function renderAddedMembers() {
-            const listContainer = document.getElementById("addedMembersList");
-            listContainer.innerHTML = "";
-            if (addedMembers.length === 0) {
-                listContainer.innerHTML = "<p>No members added yet.</p>";
-            } else {
-                addedMembers.forEach((member, index) => {
-                    const memberDiv = document.createElement("div");
-                    memberDiv.className = "member-item";
-                    memberDiv.innerHTML = `<span>${member}</span>
-            <button type="button" class="delete-member-btn" onclick="deleteMember(${index})">&times;</button>`;
-                    listContainer.appendChild(memberDiv);
-                });
-            }
-        }
-
-        // Attach deleteMember to window so inline onclick can access it
-        window.deleteMember = function (index) {
-            addedMembers.splice(index, 1);
-            renderAddedMembers();
-        };
-
-        // Attach addMember to window so inline onclick can access it
-        window.addMember = function (email) {
-            if (!addedMembers.includes(email)) {
-                addedMembers.push(email);
-                renderAddedMembers();
-            } else {
-                alert("Member already added.");
-            }
-        };
-
-        // Search member functionality using Firestore "users" collection
-        document.getElementById("searchMemberBtn").addEventListener("click", async () => {
-            const emailInput = document.getElementById("memberEmailSearch").value.trim();
-            const resultContainer = document.getElementById("memberSearchResult");
-            resultContainer.innerHTML = "";
-            if (!emailInput) {
-                resultContainer.innerHTML = "<p>Please enter an email address.</p>";
-                return;
-            }
-
-            // Query the Firestore "users" collection for a matching email
-            const usersQuery = query(
-                collection(db, "users"),
-                where("email", "==", emailInput)
-            );
-            const querySnapshot = await getDocs(usersQuery);
-            if (querySnapshot.empty) {
-                resultContainer.innerHTML = "<p>No user found with this email.</p>";
-            } else {
-                querySnapshot.forEach(doc => {
-                    const userData = doc.data();
-                    resultContainer.innerHTML = `
-            <p>${userData.displayName || userData.email} found.</p>
-            <button type="button" onclick="addMember('${userData.email}')">Add Member</button>
-          `;
-                });
-            }
-        });
-
-        // Form submission: Save new project to Firestore
-        projectForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const projectName = document.getElementById("projectName").value;
-            // Optionally, add the current user's email automatically if not already added
-            const currentUserEmail = auth.currentUser ? auth.currentUser.email : null;
-            if (currentUserEmail && !addedMembers.includes(currentUserEmail)) {
-                addedMembers.push(currentUserEmail);
-            }
-            try {
-                await addDoc(collection(db, "projects"), {
-                    name: projectName,
-                    members: addedMembers,
-                    createdAt: serverTimestamp()
-                });
-                closeModal();
-            } catch (error) {
-                console.error("Error adding project: ", error);
-            }
-        });
-    </script>
+      if (sidebar.classList.contains("collapsed")) {
+        logoText.textContent = "";
+      } else {
+        logoText.textContent = "TeamSync";
+      }
+    }
+  </script>
 </body>
 
 </html>
