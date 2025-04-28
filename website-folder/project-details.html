@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Details</title>
+    <style>
+        /* Global and Layout Styles (reuse from index.html for consistency) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: sans-serif;
+            background: #f3f4f6;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background-color: #1f2937;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar .nav-links {
+            list-style: none;
+            padding: 0.25rem 0;
+        }
+
+        .sidebar .nav-links li {
+            margin: 0.25rem 0;
+        }
+
+        .sidebar .nav-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar .nav-links a:hover {
+            background-color: #374151;
+            border-radius: 8px;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .text {
+            margin-left: 1rem;
+            white-space: nowrap;
+        }
+
+        .toggle-link {
+            cursor: pointer;
+        }
+
+        /* Main Content & Topbar */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .topbar h2 {
+            font-size: 1.5rem;
+        }
+
+        /* Project Navigation Tabs */
+        .project-nav {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .project-nav li a {
+            text-decoration: none;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Same as before) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <ul class="nav-links nav-top">
+                    <li>
+                        <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+                            <span class="icon">☰</span>
+                            <span class="text" id="logoText">TeamSync</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="profile-nw.html">
+                            <span class="icon">👤</span>
+                            <span class="text">Your Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="global-chat.html">
+                            <span class="icon">💬</span>
+                            <span class="text">Chats</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html">
+                            <span class="icon">📁</span>
+                            <span class="text">Projects</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar displaying the Project Name -->
+            <div class="topbar">
+                <h2 id="projectTitle">Project Name</h2>
+            </div>
+
+            <!-- Project Navigation Tabs -->
+            <ul class="project-nav">
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#discussion">Discussion</a></li>
+                <li><a href="#issues">Issue Tracker</a></li>
+            </ul>
+
+            <!-- Project Content Area -->
+            <section class="content-area" id="projectContent">
+                <!-- Content for the selected tab will go here -->
+                <p>Select a section from above. (Content under development...)</p>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        // Your Firebase configuration (replace with your own)
+        const firebaseConfig = {
+            apiKey:"AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+            authDomain: "teamsync-28a36.firebaseapp.com",
+            projectId: "teamsync-28a36",
+            storageBucket: "teamsync-28a36.appspot.com",
+            messagingSenderId: "518634293938",
+            appId:"1:518634293938:web:2c94b73b69c20349ae57ab"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Sidebar toggle (reuse the same function)
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const logoText = document.getElementById("logoText");
+            sidebar.classList.toggle("collapsed");
+            logoText.textContent = sidebar.classList.contains("collapsed") ? "" : "TeamSync";
+        }
+        window.toggleSidebar = toggleSidebar;
+
+        // Get project ID from query string and load project data
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get("id");
+        const projectTitle = document.getElementById("projectTitle");
+
+        async function loadProject() {
+            if (projectId) {
+                const projectDoc = await getDoc(doc(db, "projects", projectId));
+                if (projectDoc.exists()) {
+                    const data = projectDoc.data();
+                    projectTitle.innerText = data.name;
+                    // You can also load members or other project details here
+                } else {
+                    projectTitle.innerText = "Project Not Found";
+                }
+            }
+        }
+        loadProject();
+    </script>
+</body>
+
+</html>
