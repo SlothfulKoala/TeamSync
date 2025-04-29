@@ -576,7 +576,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, doc, updateDoc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
@@ -595,17 +595,29 @@
     let currentChatId = null;
     let currentMode = null; // 'personal' or 'group'
 
-    onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user); // Add this log for debugging
+    onAuthStateChanged(auth, async (user) => {
+      console.log("Auth state changed:", user);
       if (!user) {
-        console.log("No user logged in, redirecting to Login.html"); // Add this log for debugging
+        console.log("No user logged in, redirecting to Login.html");
         window.location.href = "login.html";
       } else {
-        currentUsername = user.uid;
-        initializeAppForUser(user);
+        try {
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            currentUsername = userSnap.data().username;
+            console.log("Logged in as:", currentUsername);
+            initializeAppForUser(user);
+          } else {
+            console.error("User document not found!");
+            window.location.href = "login.html";
+          }
+        } catch (error) {
+          console.error("Error fetching user document:", error);
+          window.location.href = "login.html";
+        }
       }
     });
-
 
     function initializeAppForUser(user) {
       listenToChatListChanges();
@@ -814,14 +826,21 @@
         messagesDiv.innerHTML = "";
         snapshot.forEach(docSnap => {
           const data = docSnap.data();
-          const msgDiv = document.createElement("div");
-          msgDiv.classList.add("message");
-          if (data.senderId === currentUsername) msgDiv.classList.add("sent");
-          const bubble = document.createElement("div");
-          bubble.classList.add("bubble");
-          bubble.textContent = `${data.senderName}: ${data.text}`;
-          msgDiv.appendChild(bubble);
-          messagesDiv.appendChild(msgDiv);
+
+          const messageDiv = document.createElement("div");
+          messageDiv.classList.add("message");
+          if (data.senderId === currentUsername) {
+            messageDiv.classList.add("sent");
+          } else {
+            messageDiv.classList.add("received");
+          }
+
+          const bubbleDiv = document.createElement("div");
+          bubbleDiv.classList.add("bubble");
+          bubbleDiv.textContent = `${data.senderName}: ${data.text}`;
+
+          messageDiv.appendChild(bubbleDiv);
+          messagesDiv.appendChild(messageDiv);
         });
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       });
