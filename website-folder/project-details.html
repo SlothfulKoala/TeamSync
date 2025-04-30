@@ -434,8 +434,7 @@
                                 <h3>📄 Project Description</h3>
                                 <button class="edit-btn">Edit</button>
                             </div>
-                            <p id="projectDescription">This is a sample project description that gives an overview of
-                                the project's purpose and scope.</p>
+                            <p id="projectDescription" contenteditable="false"></p>
                         </div>
 
                         <!-- Team Members -->
@@ -490,7 +489,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, onSnapshot, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -512,97 +511,112 @@
 
         async function loadProject() {
             if (projectId) {
-                console.log("Fetching project with ID:", projectId); // Log the project ID
-                const projectDocRef = doc(db, "projects", projectId); // Reference to the project document
-                const projectDoc = await getDoc(projectDocRef);
+                const docRef = doc(db, "projects", projectId);
+                const docSnap = await getDoc(docRef);
 
-                if (projectDoc.exists()) {
-                    const data = projectDoc.data();
-                    console.log("Project data:", data); // Log the project data
-                    console.log("Project Name:", data.name); // Log the project name
-                    if (data.name) {
-                        projectTitle.innerText = data.name; // Set the project name to the title element
-                    } else {
-                        projectTitle.innerText = "Project name not found"; // Fallback message
-                    }
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    projectTitle.textContent = data.title || "Untitled Project";
+                    document.getElementById("projectDescription").textContent = data.description || "No description available";
+
+                    const memberList = document.getElementById("memberList");
+                    memberList.innerHTML = "";
+                    (data.team || []).forEach(member => {
+                        const li = document.createElement("li");
+                        li.textContent = member;
+                        memberList.appendChild(li);
+                    });
                 } else {
-                    projectTitle.innerText = "Project Not Found"; // If the project doesn't exist
+                    projectTitle.textContent = "Project Not Found";
                 }
-            } else {
-                console.error("Invalid projectId:", projectId); // Log an error if projectId is null/undefined
-                projectTitle.innerText = "Invalid Project ID"; // Handle invalid project ID
             }
         }
         loadProject();
 
-        // Check project membership
-        async function checkProjectMembership(userId, projectId) {
-            const projectRef = doc(db, "projects", projectId);
-            const projectSnap = await getDoc(projectRef);
-
-            if (projectSnap.exists()) {
-                const members = projectSnap.data().members || [];
-                return members.includes(userId);
-            }
-
-            return false;
-        }
-
-        // Authenticate and load chat if user is a member
+        // Authenticate and load project data
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "login.html";
-                return;
-            }
+            if (user && projectId) {
+                const projectRef = doc(db, "projects", projectId);
+                const projectSnap = await getDoc(projectRef);
 
-            const isMember = await checkProjectMembership(user.uid, projectId);
-            if (!isMember) {
-                window.location.href = "login.html";
-            } else {
-                initializeChatPage(user);
+                if (projectSnap.exists()) {
+                    const data = projectSnap.data();
+                    projectTitle.textContent = data.name || "Untitled Project";
+                    document.getElementById("projectDescription").textContent = data.description || "No description provided.";
+
+                    const memberList = document.getElementById("memberList");
+                    memberList.innerHTML = ""; // Clear old content
+                    data.members?.forEach(member => {
+                        const li = document.createElement("li");
+                        li.textContent = member;
+                        memberList.appendChild(li);
+                    });
+                } else {
+                    projectTitle.textContent = "Project Not Found";
+                }
             }
         });
 
-        // Initialize chat
-        function initializeChatPage(user) {
-            const messagesContainer = document.getElementById("messages");
-            const messageInput = document.getElementById("messageInput");
-            const sendButton = document.getElementById("sendButton");
+        const descriptionElement = document.getElementById("projectDescription");
+        const descriptionEditBtn = descriptionElement.closest(".card").querySelector(".edit-btn");
 
-            // Real-time message listener
-            const chatRef = collection(db, "projects", projectId, "chat");
-            onSnapshot(chatRef, (snapshot) => {
-                messagesContainer.innerHTML = ""; // Clear previous messages
-                snapshot.forEach(doc => {
-                    const msg = doc.data();
-                    const div = document.createElement("div");
-                    div.classList.add("message");
-                    div.classList.add(msg.senderId === user.uid ? "user-message" : "other-message");
+        descriptionEditBtn.addEventListener("click", async () => {
+            if (descriptionElement.isContentEditable) {
+                // Save to Firestore
+                const newDescription = descriptionElement.innerText.trim();
+                await updateProjectField("description", newDescription);
+                descriptionElement.contentEditable = "false";
+                descriptionEditBtn.textContent = "Edit";
+            } else {
+                descriptionElement.contentEditable = "true";
+                descriptionElement.focus();
+                descriptionEditBtn.textContent = "Save";
+            }
+        });
 
-                    const content = document.createElement("div");
-                    content.classList.add("message-content");
-                    content.textContent = msg.text;
-
-                    div.appendChild(content);
-                    messagesContainer.appendChild(div);
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                });
-            });
-
-            // Send message
-            sendButton.addEventListener("click", async () => {
-                const text = messageInput.value.trim();
-                if (text === "") return;
-
-                await addDoc(chatRef, {
-                    text,
-                    senderId: user.uid,
-                    timestamp: serverTimestamp()
-                });
-
-                messageInput.value = "";
-            });
+        async function updateProjectField(field, value) {
+            const docRef = doc(db, "projects", projectId);
+            try {
+                await getDoc(docRef); // Ensure it exists
+                await updateDoc(docRef, { [field]: value });
+                console.log(`${field} updated successfully.`);
+            } catch (error) {
+                console.error("Error updating project:", error);
+            }
         }
+
+        const memberListElement = document.getElementById("memberList");
+        const membersEditBtn = memberListElement.closest(".card").querySelector(".edit-btn");
+
+        membersEditBtn.addEventListener("click", () => {
+            if (membersEditBtn.textContent === "Edit") {
+                const members = Array.from(memberListElement.children).map(li => li.textContent);
+                memberListElement.innerHTML = ""; // Clear existing
+
+                members.forEach(name => {
+                    const input = document.createElement("input");
+                    input.value = name;
+                    input.classList.add("member-input");
+                    memberListElement.appendChild(input);
+                });
+
+                membersEditBtn.textContent = "Save";
+            } else {
+                const inputs = memberListElement.querySelectorAll("input");
+                const updatedMembers = Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
+
+                updateProjectField("teamMembers", updatedMembers);
+
+                memberListElement.innerHTML = "";
+                updatedMembers.forEach(name => {
+                    const li = document.createElement("li");
+                    li.textContent = name;
+                    memberListElement.appendChild(li);
+                });
+
+                membersEditBtn.textContent = "Edit";
+            }
+        });
 
         // Sidebar toggle
         function toggleSidebar() {
@@ -631,7 +645,7 @@
             });
         });
     </script>
-
 </body>
+
 
 </html>
