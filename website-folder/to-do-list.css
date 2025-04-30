@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-image: url('https://media.istockphoto.com/id/1955192203/photo/businessman-ticks-checklist-and-takes-online-assessment-survey-test-for-online-survey-form.jpg?s=612x612&w=0&k=20&c=X03GtanRFEHvOIWl8duexV_t_wceDM4e7FWaMTCVWm8=');
+  background-image: url('image1.png'); /* Replace with your image path */
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed; /* Optional: keeps the background fixed while scrolling */
@@ -50,7 +50,7 @@ body::before {
 
 h1 {
   text-align: center;
-  color: #444; /* Slightly darker text */
+  color: #0e3797; /* Slightly darker text */
   margin-bottom: 30px; /* More space below the title */
   font-size: 2.5rem; /* Slightly larger title */
   letter-spacing: 1.5px;
@@ -78,12 +78,12 @@ h1 {
 .task-input input:focus {
   border-color: #6a11cb; /* Keep the focus color */
   outline: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(37, 9, 9, 0.1);
 }
 
 .task-input button {
   padding: 15px 25px;
-  background: #343536; /* Keep the add button color */
+  background: #033c75; /* Keep the add button color */
   color: #fff;
   border: none;
   border-radius: 15px;
@@ -148,7 +148,7 @@ h1 {
 
 .task-item .actions button:hover {
   transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+  box-shadow: 0 4px 8px rgba(46, 44, 44, 0.15); /* More pronounced shadow on hover */
 }
 
 .task-item .delete-btn {
@@ -177,7 +177,7 @@ h1 {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Added box-shadow transition */
   background-color: #fff; /* Ensure white background for contrast */
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  box-shadow: 0 1px 3px rgba(70, 17, 139, 0.05); /* Subtle shadow */
 }
 
 .task-item select:hover {
