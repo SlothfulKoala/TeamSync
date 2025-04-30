@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeamSync | Welcome</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      padding: 60px;
+      background-color: rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #00ffd1;
+      margin-bottom: 20px;
+    }
+
+    .headline {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+
+    .message {
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      color: #d0d0d0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f2027;
+      background-color: #00ffd1;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #00ccaa;
+      transform: translateY(-2px);
+    }
+
+    .signup {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    .signup a {
+      color: #00ffd1;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 6px;
+    }
+
+    .signup a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 20px;
+      }
+
+      .logo {
+        font-size: 3rem;
+      }
+
+      .headline {
+        font-size: 1.8rem;
+      }
+
+      .message {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">TeamSync</div>
+    <div class="headline">Welcome to TeamSync 👋</div>
+    <div class="message">
+      To access all the collaboration features, please login first.
+    </div>
+    <a href="login.html" class="btn">Login</a>
+    <div class="signup">
+      New user?
+      <a href="signup.html">Sign up</a>
+    </div>
+  </div>
+</body>
+</html>

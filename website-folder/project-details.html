@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: sans-serif;
+            background: #f3f4f6;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #1f2937;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar .nav-links {
+            list-style: none;
+            padding: 0.25rem 0;
+        }
+
+        .sidebar .nav-links li {
+            margin: 0.25rem 0;
+        }
+
+        .sidebar .nav-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar .nav-links a:hover {
+            background-color: #374151;
+            border-radius: 8px;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .text {
+            margin-left: 1rem;
+            white-space: nowrap;
+        }
+
+        .toggle-link {
+            cursor: pointer;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar.collapsed .text {
+            display: none;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-link {
+            text-decoration: none;
+            font-size: 1.5rem;
+            color: #1f2937;
+            padding: 0.25rem 0.5rem;
+            transition: background-color 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .profile-link:hover {
+            background-color: #f3f4f6;
+        }
+
+        .project-nav {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .project-nav li a {
+            text-decoration: none;
+            color: #1f2937;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .project-nav li a.active {
+            border-bottom: 2px solid #2563eb;
+            color: #2563eb;
+        }
+
+        .content-area {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .edit-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover {
+            background-color: #1e40af;
+        }
+
+        .card {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Layout Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Card Layout */
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Card Header Flex */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: #111827;
+        }
+
+        .edit-btn {
+            background-color: #3b82f6;
+            border: none;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .edit-btn:hover {
+            background-color: #2563eb;
+        }
+
+        /* Member List */
+        .member-list {
+            list-style: none;
+            padding-left: 1rem;
+            color: #374151;
+        }
+
+        .member-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            list-style: none;
+            padding-left: 1rem;
+            color: #4b5563;
+        }
+
+        .activity-feed li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Chat Layout */
+        #chatContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #f3f4f6;
+            padding: 10px;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h3 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: #333;
+        }
+
+        #chatInfo {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        #chatHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            color: #111827;
+            background-color: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Messages Container */
+        .messages-container {
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        /* Message Bubble Styles */
+        .message {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .user-message {
+            align-items: flex-end;
+        }
+
+        .other-message {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .user-message .message-content {
+            background-color: #3b82f6;
+            color: white;
+            margin-right: 5px;
+        }
+
+        .other-message .message-content {
+            background-color: #e5e7eb;
+            color: #333;
+            margin-left: 5px;
+        }
+
+        /* Message Input Area */
+        .input-section {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background-color: white;
+        }
+
+        .input-section input {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #d1d5db;
+            margin-right: 0.5rem;
+        }
+
+        .input-section button {
+            padding: 0.75rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-section button:hover {
+            background-color: #1e40af;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+
+        #sendButton {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        #sendButton:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar collapsed" id="sidebar">
+            <div class="sidebar-content">
+                <ul class="nav-links nav-top">
+                    <li>
+                        <a href="javascript:void(0)" onclick="toggleSidebar()" class="toggle-link">
+                            <span class="icon">☰</span>
+                            <span class="text" id="logoText"></span>
+                        </a>
+                    </li>
+                    <li><a href="profile-nw.html"><span class="icon">👤</span><span class="text">Your Profile</span></a>
+                    </li>
+                    <li><a href="index.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
+                    <li><a href="global-chat.html"><span class="icon">💬</span><span class="text">Chats</span></a></li>
+                    <li><a href="index.html"><span class="icon">📁</span><span class="text">Projects</span></a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main-content">
+            <div class="topbar">
+                <h2 id="projectTitle">Project Name</h2>
+                <div class="topbar-right">
+                    <a href="profile-nw.html" class="profile-link" title="Your Profile">👤</a>
+                </div>
+            </div>
+
+            <!-- Nav Tabs -->
+            <ul class="project-nav" id="tabNav">
+                <li><a href="javascript:void(0)" data-tab="details" class="active">Details</a></li>
+                <li><a href="javascript:void(0)" data-tab="chat">Chat</a></li>
+                <li><a href="javascript:void(0)" data-tab="todo">To-Do</a></li>
+                <li><a href="javascript:void(0)" data-tab="issues">Issues</a></li>
+            </ul>
+
+            <!-- Tab Content -->
+            <section class="content-area">
+                <div class="tab-section active" id="details">
+                    <div class="details-grid">
+                        <!-- Project Description -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📄 Project Description</h3>
+                                <button class="edit-btn">Edit</button>
+                            </div>
+                            <p id="projectDescription" contenteditable="false"></p>
+                        </div>
+
+                        <!-- Team Members -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>👥 Team Members</h3>
+                                <button class="edit-btn">Edit</button>
+                            </div>
+                            <ul class="member-list" id="memberList">
+                                <li>John Doe</li>
+                                <li>Jane Smith</li>
+                                <li>Alex Johnson</li>
+                            </ul>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>📌 Recent Activity</h3>
+                            </div>
+                            <ul class="activity-feed">
+                                <li>✔️ Task "Set up backend" marked as complete by John.</li>
+                                <li>➕ Jane was added to the project.</li>
+                                <li>📎 "UI Draft" file uploaded by Alex.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Tabs (tasks, issues, chat) will be placed here -->
+                <div class="tab-section" id="chat">
+                    <div id="chatContainer">
+                        <div id="chatHeader">
+                            <h3>Project Chat</h3>
+                        </div>
+
+                        <div id="messages" class="messages-container">
+                            <!-- Chat messages will be dynamically injected here -->
+                        </div>
+
+                        <div id="messageInputSection" class="input-section">
+                            <input type="text" id="messageInput" placeholder="Type your message..." />
+                            <button id="sendButton">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+            authDomain: "teamsync-28a36.firebaseapp.com",
+            projectId: "teamsync-28a36",
+            storageBucket: "teamsync-28a36.appspot.com",
+            messagingSenderId: "518634293938",
+            appId: "1:518634293938:web:2c94b73b69c20349ae57ab"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get("id");
+        const projectTitle = document.getElementById("projectTitle");
+
+        async function loadProject() {
+            if (projectId) {
+                const docRef = doc(db, "projects", projectId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    projectTitle.textContent = data.title || "Untitled Project";
+                    document.getElementById("projectDescription").textContent = data.description || "No description available";
+
+                    const memberList = document.getElementById("memberList");
+                    memberList.innerHTML = "";
+                    (data.team || []).forEach(member => {
+                        const li = document.createElement("li");
+                        li.textContent = member;
+                        memberList.appendChild(li);
+                    });
+                } else {
+                    projectTitle.textContent = "Project Not Found";
+                }
+            }
+        }
+        loadProject();
+
+        // Authenticate and load project data
+        onAuthStateChanged(auth, async (user) => {
+            if (user && projectId) {
+                const projectRef = doc(db, "projects", projectId);
+                const projectSnap = await getDoc(projectRef);
+
+                if (projectSnap.exists()) {
+                    const data = projectSnap.data();
+                    projectTitle.textContent = data.name || "Untitled Project";
+                    document.getElementById("projectDescription").textContent = data.description || "No description provided.";
+
+                    const memberList = document.getElementById("memberList");
+                    memberList.innerHTML = ""; // Clear old content
+                    data.members?.forEach(member => {
+                        const li = document.createElement("li");
+                        li.textContent = member;
+                        memberList.appendChild(li);
+                    });
+                } else {
+                    projectTitle.textContent = "Project Not Found";
+                }
+            }
+        });
+
+        const descriptionElement = document.getElementById("projectDescription");
+        const descriptionEditBtn = descriptionElement.closest(".card").querySelector(".edit-btn");
+
+        descriptionEditBtn.addEventListener("click", async () => {
+            if (descriptionElement.isContentEditable) {
+                // Save to Firestore
+                const newDescription = descriptionElement.innerText.trim();
+                await updateProjectField("description", newDescription);
+                descriptionElement.contentEditable = "false";
+                descriptionEditBtn.textContent = "Edit";
+            } else {
+                descriptionElement.contentEditable = "true";
+                descriptionElement.focus();
+                descriptionEditBtn.textContent = "Save";
+            }
+        });
+
+        async function updateProjectField(field, value) {
+            const docRef = doc(db, "projects", projectId);
+            try {
+                await getDoc(docRef); // Ensure it exists
+                await updateDoc(docRef, { [field]: value });
+                console.log(`${field} updated successfully.`);
+            } catch (error) {
+                console.error("Error updating project:", error);
+            }
+        }
+
+        const memberListElement = document.getElementById("memberList");
+        const membersEditBtn = memberListElement.closest(".card").querySelector(".edit-btn");
+
+        membersEditBtn.addEventListener("click", () => {
+            if (membersEditBtn.textContent === "Edit") {
+                const members = Array.from(memberListElement.children).map(li => li.textContent);
+                memberListElement.innerHTML = ""; // Clear existing
+
+                members.forEach(name => {
+                    const input = document.createElement("input");
+                    input.value = name;
+                    input.classList.add("member-input");
+                    memberListElement.appendChild(input);
+                });
+
+                membersEditBtn.textContent = "Save";
+            } else {
+                const inputs = memberListElement.querySelectorAll("input");
+                const updatedMembers = Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
+
+                updateProjectField("teamMembers", updatedMembers);
+
+                memberListElement.innerHTML = "";
+                updatedMembers.forEach(name => {
+                    const li = document.createElement("li");
+                    li.textContent = name;
+                    memberListElement.appendChild(li);
+                });
+
+                membersEditBtn.textContent = "Edit";
+            }
+        });
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const logoText = document.getElementById("logoText");
+            sidebar.classList.toggle("collapsed");
+            logoText.textContent = sidebar.classList.contains("collapsed") ? "" : "TeamSync";
+        }
+        window.toggleSidebar = toggleSidebar;
+
+        // Tab navigation
+        const tabLinks = document.querySelectorAll(".project-nav a");
+        const tabSections = document.querySelectorAll(".tab-section");
+
+        tabLinks.forEach(link => {
+            link.addEventListener("click", () => {
+                tabLinks.forEach(l => l.classList.remove("active"));
+                link.classList.add("active");
+
+                tabSections.forEach(section => {
+                    section.classList.remove("active");
+                    if (section.id === link.dataset.tab) {
+                        section.classList.add("active");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+
+</html>

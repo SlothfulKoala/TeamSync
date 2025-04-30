@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TeamSync - Issues</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Reset and Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: #edf2f7;
+  color: #2d3748;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Container */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* Navigation */
+nav ul {
+  list-style: none;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+nav ul li {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #3182ce;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.3s, color 0.3s;
+}
+
+nav a:hover {
+  background: #e2e8f0;
+}
+
+/* Issue Form */
+.issue-form {
+  background: #f7fafc;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.issue-form h2 {
+  font-size: 1.75rem;
+  margin-bottom: 20px;
+  color: #2d3748;
+}
+
+.issue-form input,
+.issue-form textarea,
+.issue-form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.issue-form input:focus,
+.issue-form textarea:focus,
+.issue-form select:focus {
+  border-color: #3182ce;
+  outline: none;
+}
+
+.issue-form button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #38a169;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.issue-form button:hover {
+  background: #2f855a;
+}
+
+/* Issue List */
+.issue-list h2 {
+  font-size: 1.75rem;
+  margin-bottom: 20px;
+  color: #2d3748;
+}
+
+/* Issue Table */
+.issue-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 40px;
+}
+
+.issue-table th,
+.issue-table td {
+  padding: 12px 15px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.issue-table th {
+  background: #edf2f7;
+  font-weight: 600;
+}
+
+.priority-high {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+.priority-medium {
+  color: #dd6b20;
+  font-weight: 600;
+}
+
+.priority-low {
+  color: #38a169;
+  font-weight: 600;
+}
+
+.issue-table select {
+  padding: 8px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+/* Editable Cell Layout */
+.editable-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editable-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Editable Icon */
+.editable-icon {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  margin-left: 8px;
+  color: #4a5568;
+}
+
+.editable-icon:focus {
+  outline: none;
+}
+
+/* Save and Cancel Buttons */
+.save-btn, .cancel-btn {
+  cursor: pointer;
+  border: 1px solid #3182ce;
+  background: #fff;
+  color: #3182ce;
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  margin-left: 4px;
+  border-radius: 4px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.save-btn:hover, .cancel-btn:hover {
+  background: #3182ce;
+  color: #fff;
+}
+
+/* Editing Mode */
+.editing {
+  outline: 1px dashed #000;
+  background-color: #ffffff;
+  padding: 1vh;
+  border-radius: 1vh;
+  width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Issue Tracker</h1>
+            <p>Log and manage issues effectively.</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="global-chat.html">Discussions</a></li>
+            </ul>
+        </nav>
+
+        <!-- Section to Log a New Issue -->
+        <section class="issue-form">
+            <h2>Log a New Issue</h2>
+            <form id="issue-form">
+                <input type="text" id="issue-title" placeholder="Issue Title" required>
+                <textarea id="issue-desc" placeholder="Issue Description" rows="4" required></textarea>
+                <select id="issue-priority" required>
+                    <option value="" disabled selected>Select Priority (Higher Numbers mean Higher Priority)</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+                <select id="issue-status" required>
+                    <option value="" disabled selected>Status</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+                <button type="submit">Log Issue</button>
+            </form>
+        </section>
+
+        <!-- Section to Display Existing Issues -->
+        <section class="issue-list">
+            <h2>Existing Issues</h2>
+            <table class="issue-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Created By</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="issues-table-body">
+                    <!-- Issues will be inserted here dynamically -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Firebase SDK and Application Code -->
+    <script type="module">
+        // Import necessary Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            onSnapshot,
+            updateDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+        // Replace with your actual Firebase project configuration.
+        const firebaseConfig = {
+            apiKey:"AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+            authDomain: "teamsync-28a36.firebaseapp.com",
+            projectId: "teamsync-28a36",
+            storageBucket: "teamsync-28a36.firebasestorage.app",
+            messagingSenderId: "518634293938",
+            appId:"1:518634293938:web:2c94b73b69c20349ae57ab"
+        };
+
+        // Initialize Firebase, Firestore, and Auth.
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Function to add a new issue document.
+        async function addIssue(event) {
+            event.preventDefault(); // Prevent page refresh.
+            const title = document.getElementById("issue-title").value;
+            const description = document.getElementById("issue-desc").value;
+            const priority = parseInt(document.getElementById("issue-priority").value, 10);
+            const status = document.getElementById("issue-status").value;
+
+            // Automatically pick up the creator from Firebase Authentication.
+            const user = auth.currentUser;
+            const creatorId = user ? user.uid : "guest";
+            const creatorName = user ? (user.displayName || user.email || "User") : "Guest";
+
+            try {
+                const issueRef = await addDoc(collection(db, "issues"), {
+                    title,
+                    description,
+                    creatorId,
+                    creatorName,
+                    priority,
+                    status,
+                    createdAt: new Date()
+                });
+                console.log("Issue added with ID:", issueRef.id);
+                event.target.reset();
+            } catch (error) {
+                console.error("Error adding issue:", error);
+            }
+        }
+
+        // Function to render issues.
+        function renderIssues(issueDocs) {
+            const tableBody = document.getElementById("issues-table-body");
+            tableBody.innerHTML = ""; // Clear previous rows.
+
+            issueDocs.forEach(issueDoc => {
+                const data = issueDoc.data();
+                const tr = document.createElement("tr");
+                tr.setAttribute("data-id", issueDoc.id);
+
+                // --- Title Cell with Save and Cancel Options ---
+                const tdTitle = document.createElement("td");
+                const titleContainer = document.createElement("div");
+                titleContainer.classList.add("editable-cell");
+                const spanTitle = document.createElement("span");
+                spanTitle.classList.add("editable-text");
+                spanTitle.textContent = data.title;
+                // The initial edit icon (pen) is aligned to the right.
+                const editTitleBtn = document.createElement("button");
+                editTitleBtn.classList.add("editable-icon");
+                editTitleBtn.innerHTML = "✎"; // initial edit icon
+
+                // Append the text and the edit icon
+                titleContainer.appendChild(spanTitle);
+                titleContainer.appendChild(editTitleBtn);
+                tdTitle.appendChild(titleContainer);
+                tr.appendChild(tdTitle);
+
+                // Title edit event to show Save and Cancel buttons.
+                editTitleBtn.addEventListener("click", async () => {
+                    if (!spanTitle.isContentEditable) {
+                        // Begin editing:
+                        const originalTitle = spanTitle.textContent;
+                        spanTitle.contentEditable = "true";
+                        spanTitle.classList.add("editing");
+                        spanTitle.focus();
+                        // Hide the original edit button.
+                        editTitleBtn.style.display = "none";
+
+                        // Create Save and Cancel buttons.
+                        const saveBtn = document.createElement("button");
+                        saveBtn.classList.add("save-btn");
+                        saveBtn.textContent = "Save";
+                        const cancelBtn = document.createElement("button");
+                        cancelBtn.classList.add("cancel-btn");
+                        cancelBtn.textContent = "Cancel";
+                        // Append the new buttons to the container.
+                        titleContainer.appendChild(saveBtn);
+                        titleContainer.appendChild(cancelBtn);
+
+                        saveBtn.addEventListener("click", async () => {
+                            spanTitle.contentEditable = "false";
+                            spanTitle.classList.remove("editing");
+                            const newTitle = spanTitle.textContent;
+                            if (newTitle !== originalTitle) {
+                                try {
+                                    await updateDoc(doc(db, "issues", issueDoc.id), { title: newTitle });
+                                    console.log("Title updated to:", newTitle);
+                                } catch (error) {
+                                    console.error("Error updating title:", error);
+                                    spanTitle.textContent = originalTitle; // Revert on error.
+                                }
+                            }
+                            // Remove Save and Cancel buttons and restore the edit icon.
+                            saveBtn.remove();
+                            cancelBtn.remove();
+                            editTitleBtn.style.display = "inline-block";
+                        });
+
+                        cancelBtn.addEventListener("click", () => {
+                            spanTitle.contentEditable = "false";
+                            spanTitle.classList.remove("editing");
+                            // Revert text to original value.
+                            spanTitle.textContent = originalTitle;
+                            saveBtn.remove();
+                            cancelBtn.remove();
+                            editTitleBtn.style.display = "inline-block";
+                        });
+                    }
+                });
+
+                // --- Description Cell with Save and Cancel Options ---
+                const tdDesc = document.createElement("td");
+                const descContainer = document.createElement("div");
+                descContainer.classList.add("editable-cell");
+                const spanDesc = document.createElement("span");
+                spanDesc.classList.add("editable-text");
+                spanDesc.textContent = data.description;
+                const editDescBtn = document.createElement("button");
+                editDescBtn.classList.add("editable-icon");
+                editDescBtn.innerHTML = "✎";
+                descContainer.appendChild(spanDesc);
+                descContainer.appendChild(editDescBtn);
+                tdDesc.appendChild(descContainer);
+                tr.appendChild(tdDesc);
+
+                editDescBtn.addEventListener("click", async () => {
+                    if (!spanDesc.isContentEditable) {
+                        const originalDesc = spanDesc.textContent;
+                        spanDesc.contentEditable = "true";
+                        spanDesc.classList.add("editing");
+                        spanDesc.focus();
+                        editDescBtn.style.display = "none";
+
+                        const saveBtn = document.createElement("button");
+                        saveBtn.classList.add("save-btn");
+                        saveBtn.textContent = "Save";
+                        const cancelBtn = document.createElement("button");
+                        cancelBtn.classList.add("cancel-btn");
+                        cancelBtn.textContent = "Cancel";
+                        descContainer.appendChild(saveBtn);
+                        descContainer.appendChild(cancelBtn);
+
+                        saveBtn.addEventListener("click", async () => {
+                            spanDesc.contentEditable = "false";
+                            spanDesc.classList.remove("editing");
+                            const newDesc = spanDesc.textContent;
+                            if (newDesc !== originalDesc) {
+                                try {
+                                    await updateDoc(doc(db, "issues", issueDoc.id), { description: newDesc });
+                                    console.log("Description updated to:", newDesc);
+                                } catch (error) {
+                                    console.error("Error updating description:", error);
+                                    spanDesc.textContent = originalDesc; // Revert on error.
+                                }
+                            }
+                            saveBtn.remove();
+                            cancelBtn.remove();
+                            editDescBtn.style.display = "inline-block";
+                        });
+
+                        cancelBtn.addEventListener("click", () => {
+                            spanDesc.contentEditable = "false";
+                            spanDesc.classList.remove("editing");
+                            spanDesc.textContent = originalDesc;
+                            saveBtn.remove();
+                            cancelBtn.remove();
+                            editDescBtn.style.display = "inline-block";
+                        });
+                    }
+                });
+
+                // --- Created By cell ---
+                const tdCreator = document.createElement("td");
+                tdCreator.textContent = data.creatorName;
+                tr.appendChild(tdCreator);
+
+                // --- Priority cell ---
+                const tdPriority = document.createElement("td");
+                tdPriority.textContent = data.priority;
+                if (data.priority >= 8) {
+                    tdPriority.classList.add("priority-high");
+                } else if (data.priority >= 4) {
+                    tdPriority.classList.add("priority-medium");
+                } else {
+                    tdPriority.classList.add("priority-low");
+                }
+                tr.appendChild(tdPriority);
+
+                // --- Status cell with dropdown ---
+                const tdStatus = document.createElement("td");
+                const select = document.createElement("select");
+                const statuses = ["open", "in-progress", "resolved"];
+                statuses.forEach(s => {
+                    const option = document.createElement("option");
+                    option.value = s;
+                    option.textContent = s.charAt(0).toUpperCase() + s.slice(1).replace("-", " ");
+                    if (data.status === s) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+                select.addEventListener("change", async (ev) => {
+                    const newStatus = ev.target.value;
+                    const confirmUpdate = confirm(`Are you sure you want to update the status to "${newStatus.charAt(0).toUpperCase()}${newStatus.slice(1).replace("-", " ")}"?`);
+                    if (!confirmUpdate) {
+                        ev.target.value = data.status;
+                        return;
+                    }
+                    try {
+                        await updateDoc(doc(db, "issues", issueDoc.id), { status: newStatus });
+                        console.log("Status updated to:", newStatus);
+                    } catch (error) {
+                        console.error("Error updating status:", error);
+                        ev.target.value = data.status;
+                    }
+                });
+                tdStatus.appendChild(select);
+                tr.appendChild(tdStatus);
+
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Real-time listener.
+        onSnapshot(collection(db, "issues"), (snapshot) => {
+            renderIssues(snapshot.docs);
+        });
+
+        // Attach the form submit event.
+        document.getElementById("issue-form").addEventListener("submit", addIssue);
+    </script>
+</body>
+
+</html>
