@@ -488,19 +488,12 @@
               <span class="text" id="logoText">TeamSync</span>
             </a>
           </li>
-          <li><a href="#"><span class="icon">👤</span><span class="text">Your Profile</span></a></li>
+          <li><a href="profile-nw.html"><span class="icon">👤</span><span class="text">Your Profile</span></a></li>
           <li><a href="index.html"><span class="icon">🏠</span><span class="text">Dashboard</span></a></li>
           <li><a href="project.html"><span class="icon">📁</span><span class="text">Projects</span></a></li>
           <li><a href="issues.html"><span class="icon">📋</span><span class="text">Issues</span></a></li>
         </ul>
-        <div class="spacer"></div>
       </div>
-
-      <ul class="nav-links">
-        <li class="settings-link">
-          <a href="#"><span class="icon">⚙️</span><span class="text">Settings</span></a>
-        </li>
-      </ul>
     </aside>
 
     <!-- Main Content -->
@@ -512,8 +505,7 @@
           </a>
         </div>
         <div class="right-icons">
-          <span title="Notifications">🔔</span>
-          <span title="Profile">👤</span>
+          <a href="profile-nw.html"><span class="topbar-link">👤</span></a>
         </div>
       </div>
 
@@ -593,12 +585,10 @@
 
     let currentUsername = null;
     let currentChatId = null;
-    let currentMode = null; // 'personal' or 'group'
+    let currentMode = null;
 
     onAuthStateChanged(auth, async (user) => {
-      console.log("Auth state changed:", user);
       if (!user) {
-        console.log("No user logged in, redirecting to Login.html");
         window.location.href = "login.html";
       } else {
         try {
@@ -606,14 +596,11 @@
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             currentUsername = userSnap.data().username;
-            console.log("Logged in as:", currentUsername);
             initializeAppForUser(user);
           } else {
-            console.error("User document not found!");
             window.location.href = "login.html";
           }
-        } catch (error) {
-          console.error("Error fetching user document:", error);
+        } catch {
           window.location.href = "login.html";
         }
       }
@@ -623,7 +610,6 @@
       listenToChatListChanges();
     }
 
-    // Modal handlers
     function openModal(id) {
       document.getElementById(id).style.display = "block";
     }
@@ -641,7 +627,6 @@
       warningDiv.innerHTML = "";
     }
 
-    // Button Listeners
     document.getElementById("newChatButton").addEventListener("click", () => {
       openModal("newChatModal");
     });
@@ -681,7 +666,6 @@
       `;
     });
 
-    // Submit chat details
     document.getElementById("submitChatDetailsBtn").addEventListener("click", async () => {
       if (currentMode === "personal") {
         const username = document.getElementById("personalChatUserInput").value.trim();
@@ -698,15 +682,12 @@
       }
     });
 
-    // Utility
     function isValidUsername(username) {
-      const regex = /^[a-zA-Z0-9_]+$/;
-      return regex.test(username);
+      return /^[a-zA-Z0-9_]+$/.test(username);
     }
 
     async function checkIfUsernameExists(username) {
-      const userRef = collection(db, "users");
-      const q = query(userRef, where("username", "==", username));
+      const q = query(collection(db, "users"), where("username", "==", username));
       const snapshot = await getDocs(q);
       return !snapshot.empty;
     }
@@ -747,6 +728,7 @@
         name: username,
         type: "personal",
         members,
+        projectId: null,
         createdAt: serverTimestamp(),
         lastMessageAt: serverTimestamp()
       });
@@ -767,7 +749,7 @@
         name: groupName,
         type: "group",
         members: [...new Set(members)],
-        projectId: projectId || null,
+        projectId: null,
         createdAt: serverTimestamp(),
         lastMessageAt: serverTimestamp()
       });
@@ -790,14 +772,30 @@
     function renderChatItem(docSnap) {
       const chat = docSnap.data();
       const chatId = docSnap.id;
+
+      let displayName = chat.name;
+      if (chat.type === "personal" && Array.isArray(chat.members)) {
+        const otherMember = chat.members.find(username => username !== currentUsername);
+        if (otherMember) {
+          displayName = otherMember;
+        }
+      }
+
       const chatItem = document.createElement("div");
       chatItem.classList.add("chat-list-item");
-      chatItem.innerHTML = `<div class="avatar">${chat.name[0]}</div><div class="chat-info"><div class="name">${chat.name}</div><div class="last-message">Click to open</div></div>`;
+      chatItem.innerHTML = `
+    <div class="avatar">${displayName[0]}</div>
+    <div class="chat-info">
+      <div class="name">${displayName}</div>
+      <div class="last-message">Click to open</div>
+    </div>
+  `;
       chatItem.addEventListener("click", () => {
         currentChatId = chatId;
-        document.getElementById("chatHeader").innerText = chat.name;
+        document.getElementById("chatHeader").innerText = displayName;
         listenToMessages();
       });
+
       document.getElementById("chatList").appendChild(chatItem);
     }
 
@@ -808,7 +806,7 @@
         await addDoc(collection(db, "chats", currentChatId, "messages"), {
           text,
           senderId: currentUsername,
-          senderName: "You",
+          senderName: currentUsername,
           timestamp: serverTimestamp()
         });
         await updateDoc(doc(db, "chats", currentChatId), {
@@ -821,32 +819,34 @@
     function listenToMessages() {
       const messagesRef = collection(db, "chats", currentChatId, "messages");
       const q = query(messagesRef, orderBy("timestamp"));
-      onSnapshot(q, (snapshot) => {
-        const messagesDiv = document.getElementById("messages");
-        messagesDiv.innerHTML = "";
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
+      getDoc(doc(db, "chats", currentChatId)).then(chatDoc => {
+        const isGroup = chatDoc.exists() && chatDoc.data().type === "group";
 
-          const messageDiv = document.createElement("div");
-          messageDiv.classList.add("message");
-          if (data.senderId === currentUsername) {
-            messageDiv.classList.add("sent");
-          } else {
-            messageDiv.classList.add("received");
-          }
+        onSnapshot(q, (snapshot) => {
+          const messagesDiv = document.getElementById("messages");
+          messagesDiv.innerHTML = "";
+          snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+            messageDiv.classList.add(data.senderId === currentUsername ? "sent" : "received");
 
-          const bubbleDiv = document.createElement("div");
-          bubbleDiv.classList.add("bubble");
-          bubbleDiv.textContent = `${data.senderName}: ${data.text}`;
+            const bubbleDiv = document.createElement("div");
+            bubbleDiv.classList.add("bubble");
+            if (isGroup) {
+              bubbleDiv.textContent = `${data.senderName}: ${data.text}`;
+            } else {
+              bubbleDiv.textContent = data.text;
+            }
 
-          messageDiv.appendChild(bubbleDiv);
-          messagesDiv.appendChild(messageDiv);
+            messageDiv.appendChild(bubbleDiv);
+            messagesDiv.appendChild(messageDiv);
+          });
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       });
     }
 
-    // Send message handlers
     document.getElementById("sendButton").addEventListener("click", sendMessage);
     document.getElementById("messageInput").addEventListener("keydown", (e) => {
       if (e.key === "Enter") sendMessage();
