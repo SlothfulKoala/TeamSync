@@ -1,387 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeamSync - Your Profile</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        
-        body {
-            display: flex;
-            height: 100vh;
-            background-color: #f5f7f9;
-        }
-        
-        .sidebar {
-            width: 220px;
-            background-color: #1a2331;
-            color: white;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-        
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            margin: 5px 0;
-            cursor: pointer;
-        }
-        
-        .sidebar-item.active {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .sidebar-item i {
-            margin-right: 15px;
-            font-size: 18px;
-        }
-        
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            margin-bottom: 15px;
-        }
-        
-        .sidebar-logo i {
-            margin-right: 15px;
-        }
-        
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: white;
-            border-bottom: 1px solid #e1e4e8;
-        }
-        
-        .header-title {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        
-        .header-icons {
-            display: flex;
-            align-items: center;
-        }
-        
-        .header-icon {
-            margin-left: 20px;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        
-        .profile-container {
-            max-width: 800px;
-            margin: 30px auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            width: 100%;
-        }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .profile-picture {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: #e1e4e8;
-            margin-right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            color: #6c757d;
-            position: relative;
-        }
-        
-        .profile-picture-change {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background-color: #4285f4;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        .profile-info h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .profile-info p {
-            color: #6c757d;
-        }
-        
-        .profile-section {
-            margin-bottom: 30px;
-        }
-        
-        .profile-section h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e1e4e8;
-        }
-        
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        .form-group {
-            flex: 1 0 300px;
-            margin-right: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .password-container {
-            position: relative;
-        }
-        
-        .change-password {
-            color: #4285f4;
-            cursor: pointer;
-            font-size: 14px;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        
-        .button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        
-        .button-primary {
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        
-        .button-secondary {
-            background-color: transparent;
-            color: #6c757d;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile - TeamSync</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .app-container {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background-color: #1f2937;
+      color: white;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.collapsed {
+      width: 60px;
+    }
+
+    .nav-links {
+      list-style: none;
+      padding: 1rem 0;
+    }
+
+    .nav-links li {
+      margin: 0.5rem 0;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      transition: background 0.2s;
+    }
+
+    .nav-links a:hover {
+      background-color: #374151;
+      border-radius: 8px;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .text {
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
+
+    .sidebar.collapsed .text {
+      display: none;
+    }
+
+    .toggle-link {
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      background-color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .topbar h2 {
+      color: #1f2937;
+    }
+
+    .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .right-icons span {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* Profile Box */
+    .profile-box {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      max-width: 420px;
+      margin: auto;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .profile-box:hover {
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .profile-box h2 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #2563eb;
+    }
+
+    .profile-box p {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .profile-box strong {
+      color: #000;
+    }
+
+    .profile-box button {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .profile-box button:hover {
+      background: linear-gradient(to right, #2563eb, #3b82f6);
+      transform: scale(1.05);
+    }
+
+    /* Popup */
+    .edit-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .popup-content input {
+      padding: 0.9rem;
+      margin: 0.5rem 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .popup-content button {
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .popup-content button:hover {
+      background: linear-gradient(to right, #2563eb, #3b82f6);
+      transform: scale(1.05);
+    }
+
+    .close-btn {
+      background: #ef4444;
+      margin-top: 0.5rem;
+    }
+
+    .close-btn:hover {
+      background: #dc2626;
+    }
+  </style>
 </head>
+
 <body>
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-logo">
-            <i>≡</i>
-            <span>TeamSync</span>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <ul class="nav-links">
+        <li>
+          <a class="toggle-link" onclick="toggleSidebar()">
+            <span class="icon">☰</span>
+            <span class="text">TeamSync</span>
+          </a>
+        </li>
+        <li><a href="profile-nw.html"><span class="icon">👤</span><span class="text">Your Profile</span></a></li>
+        <li><a href="global-chat.html"><span class="icon">💬</span><span class="text">Chats</span></a></li>
+        <li><a href="#"><span class="icon">📁</span><span class="text">Projects</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <h2>TeamSync</h2>
+        <div class="right-icons">
+          <span>👤</span>
         </div>
-        
-        <div class="sidebar-item active">
-            <i>👤</i>
-            <span>Your Profile</span>
-        </div>
-        
-        <div class="sidebar-item">
-            <i>💬</i>
-            <span>Chats</span>
-        </div>
-        
-        <div class="sidebar-item">
-            <i>🏠</i>
-            <span>Dashboard</span>
-        </div>
-        
-        <div class="sidebar-item">
-            <i>📁</i>
-            <span>Project A</span>
-        </div>
-        
-        <div class="sidebar-item">
-            <i>📁</i>
-            <span>Project B</span>
-        </div>
-        
-        <div class="sidebar-item" style="margin-top: auto;">
-            <i>⚙️</i>
-            <span>Settings</span>
-        </div>
+      </div>
+
+      <div class="profile-box">
+        <h2>Your Profile</h2>
+        <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+        <button id="editBtn">Edit Username</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Popup -->
+  <div class="edit-popup" id="editPopup">
+    <div class="popup-content">
+      <h2>Edit Username</h2>
+      <input type="password" id="currentPassword" placeholder="Enter current password">
+      <input type="text" id="newUsername" placeholder="Enter new username">
+      <button id="saveBtn">Save Changes</button>
+      <button class="close-btn" id="closePopupBtn">Cancel</button>
     </div>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-title">TeamSync</div>
-            <div class="header-icons">
-                <div class="header-icon">🔔</div>
-                <div class="header-icon">👤</div>
-            </div>
-        </div>
-        
-        <!-- Profile Content -->
-        <div class="profile-container">
-            <div class="profile-header">
-                <div class="profile-picture">
-                    JD
-                    <div class="profile-picture-change">+</div>
-                </div>
-                <div class="profile-info">
-                    <h1>Your Profile</h1>
-                    <p>Manage your personal information and account settings</p>
-                </div>
-            </div>
-            
-            <div class="profile-section">
-                <h2>Personal Information</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" value="John">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" value="Doe">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" value="john.doe@teamsync.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="jobTitle">Job Title</label>
-                        <input type="text" id="jobTitle" value="Product Manager">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="department">Department</label>
-                        <input type="text" id="department" value="Product">
-                    </div>
-                    <div class="form-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" value="San Francisco, CA">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Mobile Number</label>
-                        <input type="tel" id="phone" value="+1 (555) 123-4567">
-                    </div>
-                    <div class="form-group">
-                        <label for="timezone">Timezone</label>
-                        <input type="text" id="timezone" value="PST (UTC-8)">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="profile-section">
-                <h2>Account Settings</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="johndoe">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="password-container">
-                            <input type="password" id="password" value="••••••••••">
-                            <span class="change-password">Change</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="language">Language</label>
-                        <input type="text" id="language" value="English (US)">
-                    </div>
-                    <div class="form-group">
-                        <label for="dateFormat">Date Format</label>
-                        <input type="text" id="dateFormat" value="MM/DD/YYYY">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="profile-section">
-                <h2>Notifications</h2>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 1 0 100%">
-                        <label for="emailNotification">Email Notifications</label>
-                        <input type="text" id="emailNotification" value="All notifications">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group" style="flex: 1 0 100%">
-                        <label for="pushNotification">Push Notifications</label>
-                        <input type="text" id="pushNotification" value="Important notifications only">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="button-container">
-                <button class="button-secondary">Cancel</button>
-                <button class="button-primary">Save Changes</button>
-            </div>
-        </div>
-    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      reauthenticateWithCredential,
+      EmailAuthProvider,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCP6ZeexqSUCX3uc3-JMuleUbCxZ1YL93g",
+      authDomain: "teamsync-28a36.firebaseapp.com",
+      projectId: "teamsync-28a36",
+      storageBucket: "teamsync-28a36.appspot.com",
+      messagingSenderId: "518634293938",
+      appId: "1:518634293938:web:2c94b73b69c20349ae57ab"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const usernameElement = document.getElementById("username");
+    const emailElement = document.getElementById("email");
+    const editBtn = document.getElementById("editBtn");
+    const editPopup = document.getElementById("editPopup");
+    const closePopupBtn = document.getElementById("closePopupBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const currentPasswordInput = document.getElementById("currentPassword");
+    const newUsernameInput = document.getElementById("newUsername");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userDocRef = doc(db, "users", user.uid);
+        getDoc(userDocRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            usernameElement.textContent = data.username;
+            emailElement.textContent = data.email;
+          }
+        });
+      }
+    });
+
+    editBtn.addEventListener("click", () => {
+      editPopup.style.display = "flex";
+    });
+
+    closePopupBtn.addEventListener("click", () => {
+      editPopup.style.display = "none";
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      const user = auth.currentUser;
+      const currentPassword = currentPasswordInput.value.trim();
+      const newUsername = newUsernameInput.value.trim();
+
+      if (!currentPassword || !newUsername) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      try {
+        await reauthenticateWithCredential(user, credential);
+        await updateDoc(doc(db, "users", user.uid), { username: newUsername });
+        await updateProfile(user, { displayName: newUsername });
+        usernameElement.textContent = newUsername;
+        editPopup.style.display = "none";
+        alert("Username updated successfully!");
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    });
+
+    window.toggleSidebar = function () {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    }
+  </script>
 </body>
+
 </html>
