@@ -102,7 +102,7 @@
 
       try {
         const userCredential = await signInWithEmailAndPassword(auth, emailToLogin, password);
-        window.location.href = "index.html";
+        window.location.href = "site-dashboard.html";
       } catch (error) {
         if (error.code === "auth/user-not-found") {
           errorMessage.textContent = "No account found with these credentials.";
